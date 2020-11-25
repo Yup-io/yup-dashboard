@@ -27,13 +27,13 @@ export default function BasePage() {
                     /* Redirect from root URL to /dashboard. */
                     <Redirect exact from="/" to="/dashboard"/>
                 }
-                <ContentRoute path="/dashboard" component={DashboardPage}/>
-                <ContentRoute path="/builder" component={BuilderPage}/>
+                <ContentRoute path="/dashboard" component={YupPage}/>
+               {/* <ContentRoute path="/builder" component={BuilderPage}/>
                 <ContentRoute path="/my-page" component={YupPage}/>
                 <Route path="/google-material" component={GoogleMaterialPage}/>
                 <Route path="/react-bootstrap" component={ReactBootstrapPage}/>
                 <Route path="/e-commerce" component={ECommercePage}/>
-                <Redirect to="error/error-v1"/>
+                <Redirect to="error/error-v1"/>*/}
             </Switch>
         </Suspense>
     );
