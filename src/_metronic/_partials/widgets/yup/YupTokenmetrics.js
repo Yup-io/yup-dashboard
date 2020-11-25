@@ -94,7 +94,7 @@ class YupTokenmetrics extends Component {
                       <div>
                       <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Yup price</span>
                       <h4 className="text-success d-block mb-0 pt-2 pb-2"> {gecko.market_data.current_price.usd.toFixed(2)}$ <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h4>
-                      <span className="text-primary font-weight-bold">Mcap: ${gecko.market_data.current_price.usd*supply.YUP.supply}</span>
+                      <span className="text-primary font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply).toFixed(0)}</span>
                       </div>
                     </td>
                     <td >
@@ -111,7 +111,7 @@ class YupTokenmetrics extends Component {
                     <td>
                       <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Daily distribution</span>
                       <h4 className="text-success d-block mb-0 pt-2 pb-2">1.25%</h4>
-                      <span className="text-primary font-weight-bold">{supply.YUP.supply*0.0125}</span>
+                      <span className="text-primary font-weight-bold">{(supply.YUP.supply*0.0125).toFixed(0)}</span>
                     </td>
 
                   </tr>

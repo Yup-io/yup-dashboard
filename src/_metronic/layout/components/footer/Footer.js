@@ -18,43 +18,48 @@ export function Footer() {
       id="kt_footer"
     >
       <div
-        className={`${layoutProps.footerContainerClasses} d-flex flex-column flex-md-row align-items-center justify-content-between`}
+        className={`${layoutProps.footerContainerClasses} d-flex flex-column flex-md-row align-items-center justify-content-center`}
       >
-        <div className="text-dark order-2 order-md-1">
-          <span className="text-muted font-weight-bold mr-2">{today.toString()}</span> &copy;{" "}
+        <div className="nav nav-dark order-1 order-md-1">
           <a
-            href="http://keenthemes.com/metronic"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-dark-75 text-hover-primary"
-          >
-            Keenthemes
-          </a>
-        </div>
-        <div className="nav nav-dark order-1 order-md-2">
-          <a
-            href="http://keenthemes.com/metronic"
+            href="https://t.co/vltk6ltwCh?amp=1"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pr-3 pl-0"
           >
-            About
+            Discord
           </a>
           <a
-            href="http://keenthemes.com/metronic"
+            href="https://blog.yup.io/"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link px-3"
           >
-            Team
+            Blog
           </a>
           <a
-            href="http://keenthemes.com/metronic"
+            href="https://docs.yup.io/"
             target="_blank"
             rel="noopener noreferrer"
             className="nav-link pl-3 pr-0"
           >
-            Contact
+            Docs
+          </a>
+          <a
+            href="https://twitter.com/yup_io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link pl-3 pr-0"
+          >
+            Twitter
+          </a>
+          <a
+            href="https://yup.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link pl-3 pr-0"
+          >
+            Yup.io
           </a>
         </div>
       </div>

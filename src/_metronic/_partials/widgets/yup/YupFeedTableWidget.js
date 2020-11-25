@@ -1,5 +1,9 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid,jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
+import {Pagination} from "react-bootstrap";
+import { Loader } from './loader'
+import {Img} from 'react-image'
+import {toAbsoluteUrl} from "../../../_helpers";
 
 class YupFeedTableWidget extends Component {
   constructor(props) {
@@ -7,52 +11,81 @@ class YupFeedTableWidget extends Component {
     this.state = {
       error: null,
       isLoaded: false,
-      items: []
+      items: { 1:null,2:null,3:null,4:null,5:null},
+      page: 1
     };
     this.updateData = this.updateData.bind(this);
   }
 
   componentDidMount() {
-    this.updateData()
+    this.updateData(1, 1)
    // setInterval(this.updateData, 60000);
 
   }
-  async updateData() {
-    console.log("getting data")
-    fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip=0&limit=10&sort=desc", {
+  async updateData(page, limit) {
+    let skip = (page-1)*limit
+    fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc", {
       method: 'GET'
     })
       .then(res => res.json())
       .then(
         (result) => {
-         this.getPostData(result)
+         this.getPostData(parseInt(page),result)
         }
       )
   }
 
-  async getPostData(items) {
+  async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-    await items.actions.forEach(vote => {
-      fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
-      method: 'GET'
-    })
-      .then(res => res.json())
-      .then( (result) => {
-      fullData.push({vote: vote, post:result})
-      itemsProcessed++;
-      if(itemsProcessed === items.actions.length) {
-        console.log(fullData)
-        this.setState({
-          isLoaded: true,
-          items: fullData
-        });
-      }
+    console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
+    if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){   
+      this.setState({
+        isLoaded: false
+      });
+      await items.actions.forEach(vote => {
+        fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
+        method: 'GET'
       })
-    })
+        .then(res => res.json())
+        .then( (result) => {
+        fullData.push({vote: vote, post:result})
+        itemsProcessed++;
+        if(itemsProcessed === items.actions.length) {
+          let newItems = this.state.items
+          newItems[page] = fullData
+          console.log(newItems)
+          this.setState({
+            isLoaded: true,
+            items: newItems,
+            page: page
+          });
+        }
+        })
+      })
+    }  
+           
+    
+    else{
+      console.log("same items")
+      this.setState({
+        isLoaded: true,
+        page: page
+      });
+  
+    }
 
   }
+
   createRating(n){
+    var ratingMap = {
+      "-2": "1",
+      "-1": "2",
+      "1": "3",
+      "2": "4",
+      "3": "5",
+    }
+    n= ratingMap[n]
     var elements = [];
     var colorMap = {      
       "1": "#BE1E2D",
@@ -68,14 +101,17 @@ class YupFeedTableWidget extends Component {
     }
     return elements;
 }
+  createPagination(){
+    
+  }
   render() {
+    console.log(Loader)
     const { error, isLoaded, items } = this.state;
-
+    console.log(items)
     if (error) {
       return <div>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-      return <div>Loading...</div>;
-    } else {
+    } 
+     else {
       return (
         <div className={`card card-custom card-stretch gutter-b`}>
           {/* Head */}
@@ -87,6 +123,7 @@ class YupFeedTableWidget extends Component {
           {/* Body */}
           <div className="card-body pt-0 pb-3">
             <div className="tab-content">
+              
               <div className="table-responsive">
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
@@ -98,8 +135,10 @@ class YupFeedTableWidget extends Component {
                       <th className="text-right">#yups</th>
                     </tr>
                   </thead>
+                  {false &&
                   <tbody>
-                    {items.map(item => (
+                    
+                    {items[this.state.page].map(item => (
                       <tr key={item.vote.global_sequence}>
                         <td className="pl-7">
                           <div className="d-flex align-items-center">
@@ -119,7 +158,8 @@ class YupFeedTableWidget extends Component {
                         </td>
                         <td>
                           <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
-                           {item.post.previewData.title.substring(0, 30)+'...'}
+                           {item.post.previewData.title.substring(0, 30)}
+                           {item.post.previewData.title.length>29 && '...'}
                       </span>
                         </td>
                         <td>
@@ -141,12 +181,31 @@ class YupFeedTableWidget extends Component {
                         </td>
                       </tr>
                     ))}
-                  </tbody>
+                
+                  </tbody>  }
+                  
                 </table>
+              
               </div>
+              <div className="d-flex justify-content-center ">
+              { !isLoaded &&
+                    <Loader src="/media/logos/yup.svg" />                      
+                  }
+                  </div>
             </div>
+          <div className="separator separator-dashed my-7"></div>
+              <Pagination className="float-right">
+                <Pagination.Prev />
+                <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,10)}>{1}</Pagination.Item>
+                <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,10)}>{2}</Pagination.Item>
+                <Pagination.Item active={this.state.page==3} onClick={() =>this.updateData(3,10)}>{3}</Pagination.Item>
+                <Pagination.Item active={this.state.page==4}  onClick={() =>this.updateData(4,10)}>{4}</Pagination.Item>
+                <Pagination.Item active={this.state.page==5}  onClick={() =>this.updateData(5,10)}>{5}</Pagination.Item>
+                <Pagination.Next />
+              </Pagination>
           </div>
         </div>
+        
       )
     }
   }
