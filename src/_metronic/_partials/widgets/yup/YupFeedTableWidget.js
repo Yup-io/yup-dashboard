@@ -2,8 +2,6 @@
 import React, { Component } from "react";
 import {Pagination} from "react-bootstrap";
 import { Loader } from './loader'
-import {Img} from 'react-image'
-import {toAbsoluteUrl} from "../../../_helpers";
 
 class YupFeedTableWidget extends Component {
   constructor(props) {
@@ -18,11 +16,12 @@ class YupFeedTableWidget extends Component {
   }
 
   componentDidMount() {
-    this.updateData(1, 1)
-   // setInterval(this.updateData, 60000);
+    this.updateData(1, 10)
+   setInterval(this.updateData.bind(null, 1, 10), 60000);
 
   }
   async updateData(page, limit) {
+    console.log(page,limit)
     let skip = (page-1)*limit
     fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc", {
       method: 'GET'
@@ -135,7 +134,7 @@ class YupFeedTableWidget extends Component {
                       <th className="text-right">#yups</th>
                     </tr>
                   </thead>
-                  {false &&
+                  {isLoaded &&
                   <tbody>
                     
                     {items[this.state.page].map(item => (
