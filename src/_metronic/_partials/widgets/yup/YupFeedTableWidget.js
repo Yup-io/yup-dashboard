@@ -188,7 +188,7 @@ class YupFeedTableWidget extends Component {
               </div>
               <div className="d-flex justify-content-center ">
               { !isLoaded &&
-                    <Loader src="/media/logos/yup.svg" />                      
+                    <Loader src="/yup.svg" />                      
                   }
                   </div>
             </div>
