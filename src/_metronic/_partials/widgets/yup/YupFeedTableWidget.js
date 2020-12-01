@@ -37,33 +37,46 @@ class YupFeedTableWidget extends Component {
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
+  
     console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
     if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false
       });
+      
       await items.actions.forEach(vote => {
         fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
         method: 'GET'
       })
-        .then(res => res.json())
-        .then( (result) => {
-        fullData.push({vote: vote, post:result})
-        itemsProcessed++;
-        if(itemsProcessed === items.actions.length) {
-          let newItems = this.state.items
-          newItems[page] = fullData
-          console.log(newItems)
+        .then(res => {try {
+          res.json()
+        }
+        catch(e){
+          console.log(e)
           this.setState({
-            isLoaded: true,
-            items: newItems,
-            page: page
+            isLoaded: false,
+            error:e
           });
+        }
+      })
+        .then( (result) => {
+          if(result){
+          fullData.push({vote: vote, post:result})
+          itemsProcessed++;
+          if(itemsProcessed === items.actions.length) {
+            let newItems = this.state.items
+            newItems[page] = fullData
+            console.log(newItems)
+            this.setState({
+              isLoaded: true,
+              items: newItems,
+              page: page
+            });
+          }
         }
         })
       })
     }
-
 
     else{
       console.log("same items")
@@ -127,10 +140,10 @@ class YupFeedTableWidget extends Component {
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
                     <tr className="text-left">
+                      <th className="pl-7"> </th>
                       <th className="text-left pl-5">Time</th>
                       <th className="text-left">User</th>
                       <th >Content</th>
-                      <th className="pl-7"> </th>
                       <th className="text-left pl-5">Rating</th>
                       <th className="text-left">Platform</th>
                     </tr>
@@ -158,25 +171,28 @@ class YupFeedTableWidget extends Component {
                         </td>
                         <td>
                           <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
+                           {new Date(parseInt(item.vote.timestamp)).toLocaleTimeString()}
+                      </span>
+                        </td>
+                        <td>
+                          <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
+                           {item.vote.act.data.voter}
+                      </span>
+                        </td>
+                        <td>
+                          <a href={item.post.previewData.url} className="text-primary  font-weight-bolder d-block font-size-lg">
                            {item.post.previewData.title.substring(0, 30)}
                            {item.post.previewData.title.length>29 && '...'}
-                      </span>
+                      </a>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
-                          {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
-                      </span>
-                        </td>
-                        <td>
-
-
                           <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
                           {this.createRating(item.vote.act.data.rating)}
                           </span>
                         </td>
                         <td>
-                          <span className="text-primary text-right font-weight-bolder d-block font-size-lg">
-                          {item.post.catVotes.overall.up}
+                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
+                          {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
                       </span>
                         </td>
                       </tr>
