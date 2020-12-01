@@ -74,11 +74,11 @@ export function SubHeader() {
 
           {/* Toolbar */}
           <div className="d-flex align-items-center">
-            <a href="#" className="btn btn-light btn-sm font-weight-bold" id="kt_dashboard_daterangepicker"
+            <div  className="btn btn-light btn-sm font-weight-bold" id="kt_dashboard_daterangepicker"
                data-toggle="tooltip" title="Select dashboard daterange" data-placement="left">
               <span className="text-muted font-weight-bold mr-2" id="kt_dashboard_daterangepicker_title">Today</span>
               <span className="text-primary font-weight-bold" id="kt_dashboard_daterangepicker_date">{(new Date()).toLocaleDateString()}</span>
-            </a>
+            </div>
            {/* <QuickActions/> */} 
           </div>
         </div>
