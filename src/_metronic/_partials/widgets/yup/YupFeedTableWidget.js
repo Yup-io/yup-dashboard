@@ -38,7 +38,7 @@ class YupFeedTableWidget extends Component {
     let fullData = [];
     var itemsProcessed = 0;
     console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
-    if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){   
+    if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false
       });
@@ -62,16 +62,16 @@ class YupFeedTableWidget extends Component {
         }
         })
       })
-    }  
-           
-    
+    }
+
+
     else{
       console.log("same items")
       this.setState({
         isLoaded: true,
         page: page
       });
-  
+
     }
 
   }
@@ -86,7 +86,7 @@ class YupFeedTableWidget extends Component {
     }
     n= ratingMap[n]
     var elements = [];
-    var colorMap = {      
+    var colorMap = {
       "1": "#BE1E2D",
       "2": "#F08C28",
       "3": "#F0C800",
@@ -101,7 +101,7 @@ class YupFeedTableWidget extends Component {
     return elements;
 }
   createPagination(){
-    
+
   }
   render() {
     console.log(Loader)
@@ -109,7 +109,7 @@ class YupFeedTableWidget extends Component {
     console.log(items)
     if (error) {
       return <div>Error: {error.message}</div>;
-    } 
+    }
      else {
       return (
         <div className={`card card-custom card-stretch gutter-b`}>
@@ -122,21 +122,22 @@ class YupFeedTableWidget extends Component {
           {/* Body */}
           <div className="card-body pt-0 pb-3">
             <div className="tab-content">
-              
+
               <div className="table-responsive">
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
                     <tr className="text-left">
-                      <th className="pl-7"> </th>
+                      <th className="text-left pl-5">Time</th>
+                      <th className="text-left">User</th>
                       <th >Content</th>
-                      <th className="text-left">Platform</th>
+                      <th className="pl-7"> </th>
                       <th className="text-left pl-5">Rating</th>
-                      <th className="text-right">#yups</th>
+                      <th className="text-left">Platform</th>
                     </tr>
                   </thead>
                   {isLoaded &&
                   <tbody>
-                    
+
                     {items[this.state.page].map(item => (
                       <tr key={item.vote.global_sequence}>
                         <td className="pl-7">
@@ -167,8 +168,8 @@ class YupFeedTableWidget extends Component {
                       </span>
                         </td>
                         <td>
-                        
-                        
+
+
                           <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
                           {this.createRating(item.vote.act.data.rating)}
                           </span>
@@ -180,15 +181,15 @@ class YupFeedTableWidget extends Component {
                         </td>
                       </tr>
                     ))}
-                
+
                   </tbody>  }
-                  
+
                 </table>
-              
+
               </div>
               <div className="d-flex justify-content-center ">
               { !isLoaded &&
-                    <Loader src="/yup.svg" />                      
+                    <Loader src="/yup.svg" />
                   }
                   </div>
             </div>
@@ -204,7 +205,7 @@ class YupFeedTableWidget extends Component {
               </Pagination>
           </div>
         </div>
-        
+
       )
     }
   }
