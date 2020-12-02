@@ -1,6 +1,8 @@
 // src/App.js
 
+import { NaturePeopleOutlined } from '@material-ui/icons';
 import React, { Component } from 'react';
+import { actions } from '../../../../app/modules/Auth/_redux/authRedux';
 
 class YupTokenmetrics extends Component {
   constructor(props) {
@@ -9,17 +11,19 @@ class YupTokenmetrics extends Component {
       error: null,
       isLoaded: false,
       supply: null,
-      gecko: null
+      gecko: null,
+      yupActions: null
     };
   }
 
   async componentDidMount() {
-    let [supply, gecko]= await Promise.all([this.getSupply(), this.getGeckoData()]);
-    console.log(supply,gecko)
+    let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);
+    console.log(supply,gecko, yupActions)
     this.setState({
       isLoaded: true,
       gecko: gecko,
-      supply: supply
+      supply: supply,
+      yupActions: yupActions
     });
   }
   async getSupply(){
@@ -65,9 +69,27 @@ class YupTokenmetrics extends Component {
       })
       }
 
+      async getActionsCount(){
+        return new Promise( (resolve, reject) =>{ fetch("https://api.yup.io/accounts/actions-count")
+        .then(res => res.json())
+        .then(
+          (result) => {
+            console.log(result)
+            resolve(result)
+    
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          (error) => {
+            reject(error)
+          })
+          })
+          }
+    
   render() {
 
-    const { error, isLoaded, supply, gecko } = this.state;
+    const { error, isLoaded, supply, gecko, yupActions } = this.state;
 
     if (error) {
       return <div>Error: {error.message}</div>;
@@ -104,8 +126,8 @@ class YupTokenmetrics extends Component {
                       <span className="text-primary font-weight-bold">/{supply.YUP.max_supply}</span>
                     </td>
                     <td>
-                    <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Trading volume</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-8">${gecko.market_data.total_volume.usd.toFixed(0)}</h4>
+                    <span className="text-dark-75 font-weight-bolder d-block font-size-lg">YUP Actions</span>
+                      <h4 className="text-success d-block mb-0 pt-2 pb-8">{yupActions}</h4>
                       <span className="text-primary font-weight-bold"></span>
                     </td>
                     <td>
