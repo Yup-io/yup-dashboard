@@ -2,10 +2,9 @@
 import React, {useMemo, useLayoutEffect, useEffect} from "react";
 import objectPath from "object-path";
 import {useLocation} from "react-router-dom";
-import {QuickActions} from "./components/QuickActions";
-import {BreadCrumbs} from "./components/BreadCrumbs";
 import {getBreadcrumbsAndTitle, useSubheader} from "../../_core/MetronicSubheader";
 import {useHtmlClassService} from "../../_core/MetronicLayout"
+import {Button} from "react-bootstrap"
 
 export function SubHeader() {
   const uiService = useHtmlClassService();
@@ -39,6 +38,8 @@ export function SubHeader() {
   // Do not remove this useEffect, need from update title/breadcrumbs outside (from the page)
   useEffect(() => {}, [subheader]);
 
+  let modalClose = () => this.setState({ modalShow: false });
+
   return (
       <div
           id="kt_subheader"
@@ -58,29 +59,35 @@ export function SubHeader() {
                 </button>
             )}
 
-            <div className="d-flex align-items-baseline mr-5">
-              <h5 className="text-dark font-weight-bold my-2 mr-5">
+            <div className="d-flex align-items-center mr-5">
+              <h3 className="text-dark font-weight-bold my-2 mr-5">
                 <>
                   {subheader.title}
                 </>
                 {/*<small></small>*/}
-              </h5>
+              </h3>
+
+              <p className="text-dark-25 my-2 mr-5">
+                Yup Protocol Explorer
+              </p>
 
             </div>
-
-
-            <BreadCrumbs items={subheader.breadcrumbs} />
+            {/*<BreadCrumbs items={subheader.breadcrumbs} />*/}
           </div>
 
-          {/* Toolbar */}
+          <div className="d-flex align-items-center">
+            <Button variant="primary" href="https://app.uniswap.org/#/swap?inputCurrency=0x69bbc3f8787d573f1bbdd0a5f40c7ba0aee9bcc9&outputCurrency=ETH" target="_blank">Buy YUP</Button>
+          </div>
+
+          {/* Toolbar
           <div className="d-flex align-items-center">
             <div  className="btn btn-light btn-sm font-weight-bold" id="kt_dashboard_daterangepicker"
                data-toggle="tooltip" title="Select dashboard daterange" data-placement="left">
               <span className="text-muted font-weight-bold mr-2" id="kt_dashboard_daterangepicker_title">Today</span>
               <span className="text-primary font-weight-bold" id="kt_dashboard_daterangepicker_date">{(new Date()).toLocaleDateString()}</span>
             </div>
-           {/* <QuickActions/> */} 
-          </div>
+           {/* <QuickActions/>
+          </div> */}
         </div>
       </div>
   );

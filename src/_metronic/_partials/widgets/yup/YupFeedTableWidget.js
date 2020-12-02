@@ -2,6 +2,13 @@
 import React, { Component } from "react";
 import {Pagination} from "react-bootstrap";
 import { Loader } from './loader'
+import './custom.css'
+
+const styles = theme => ({
+  Category: {
+    marginBottom: '0px'
+  }
+})
 
 class YupFeedTableWidget extends Component {
   constructor(props) {
@@ -37,13 +44,13 @@ class YupFeedTableWidget extends Component {
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-  
+
     console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
     if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false
       });
-      
+
       await items.actions.forEach(vote => {
         fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
         method: 'GET'
@@ -129,7 +136,7 @@ class YupFeedTableWidget extends Component {
           {/* Head */}
           <div className="card-header border-0 py-5">
             <h2 className="card-title align-items-start flex-column">
-              <span className="card-label font-weight-bolder text-dark">Yup feed</span>
+              <span className="card-label font-weight-bolder text-dark">History</span>
             </h2>
           </div>
           {/* Body */}
@@ -157,41 +164,41 @@ class YupFeedTableWidget extends Component {
                           <div className="d-flex align-items-center">
                             <div><span>
                             {item.vote.act.data.category == 'intelligence' &&
-                              <h3>💡</h3>
+                              <h3 className="category-emoji">💡</h3>
                             }
                             {item.vote.act.data.category == 'funny' &&
-                              <h3>😂</h3>
+                              <h3 className="category-emoji">😂</h3>
                             }
                             {item.vote.act.data.category == 'popularity' &&
-                              <h3>❤️</h3>
+                              <h3 className="category-emoji">❤️</h3>
                             }
                             </span>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
-                           {new Date(parseInt(item.vote.timestamp)).toLocaleTimeString()}
+                          <span className="text-dark-75 d-block font-size-lg">
+                           {new Date(item.vote.timestamp).toLocaleDateString()} {new Date(item.vote.timestamp).toLocaleTimeString()}
                       </span>
                         </td>
                         <td>
-                          <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
-                           {item.vote.act.data.voter}
-                      </span>
+                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">
+                            {item.vote.act.data.voter}
+                           </a>
                         </td>
                         <td>
-                          <a href={item.post.previewData.url} className="text-primary  font-weight-bolder d-block font-size-lg">
+                          <a href={item.post.previewData.url} className="text-primary d-block font-size-lg">
                            {item.post.previewData.title.substring(0, 30)}
                            {item.post.previewData.title.length>29 && '...'}
                       </a>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
+                          <span className="text-dark-75 text-left d-block font-size-lg">
                           {this.createRating(item.vote.act.data.rating)}
                           </span>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
+                          <span className="text-dark-75 text-left d-block font-size-lg">
                           {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
                       </span>
                         </td>
@@ -203,14 +210,14 @@ class YupFeedTableWidget extends Component {
                 </table>
 
               </div>
-              <div className="d-flex justify-content-center ">
+              <div className="d-flex justify-content-center">
               { !isLoaded &&
                     <Loader src="/yup.svg" />
                   }
                   </div>
             </div>
           <div className="separator separator-dashed my-7"></div>
-              <Pagination className="float-right">
+              <Pagination className="float-right" size="lg">
                 <Pagination.Prev />
                 <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,10)}>{1}</Pagination.Item>
                 <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,10)}>{2}</Pagination.Item>

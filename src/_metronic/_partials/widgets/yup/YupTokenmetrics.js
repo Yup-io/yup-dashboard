@@ -4,6 +4,12 @@ import { NaturePeopleOutlined } from '@material-ui/icons';
 import React, { Component } from 'react';
 import { actions } from '../../../../app/modules/Auth/_redux/authRedux';
 
+String.prototype.numeral = function () {
+    return this.replace(/(^|[^\w.])(\d{4,})/g, function($0, $1, $2) {
+        return $1 + $2.replace(/\d(?=(?:\d\d\d)+(?!\d))/g, "$&,");
+    });
+};
+
 class YupTokenmetrics extends Component {
   constructor(props) {
     super(props);
@@ -76,7 +82,7 @@ class YupTokenmetrics extends Component {
           (result) => {
             console.log(result)
             resolve(result)
-    
+
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow
@@ -86,7 +92,7 @@ class YupTokenmetrics extends Component {
           })
           })
           }
-    
+
   render() {
 
     const { error, isLoaded, supply, gecko, yupActions } = this.state;
@@ -114,26 +120,26 @@ class YupTokenmetrics extends Component {
                   <tr>
                     <td >
                       <div>
-                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Yup price</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-2"> ${gecko.market_data.current_price.usd.toFixed(2)} <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h4>
-                      <span className="text-primary font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply).toFixed(0)}</span>
+                      <span className="text-dark-25 font-weight-bolder d-block font-size-lg">YUP price</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2"> ${gecko.market_data.current_price.usd.toFixed(2)} <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h2>
+                      <span className="text-dark-50 font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply).toFixed(0).numeral()}</span>
                       </div>
                     </td>
                     <td >
 
-                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Cirulating supply</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-2">{supply.YUP.supply}</h4>
-                      <span className="text-primary font-weight-bold">/{supply.YUP.max_supply}</span>
+                      <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Supply</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{supply.YUP.supply.toFixed(0).numeral()} YUP</h2>
+                      <span className="text-dark-50 font-weight-bold">/{supply.YUP.max_supply.toFixed(0).numeral()} YUP Total</span>
                     </td>
                     <td>
-                    <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Transactions</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-8">{yupActions}</h4>
-                      <span className="text-primary font-weight-bold"></span>
+                    <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Transactions</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-8">{yupActions.toFixed(0).numeral()}</h2>
+                      <span className="text-dark-50 font-weight-bold"></span>
                     </td>
                     <td>
-                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Daily distribution</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-2">1.25%</h4>
-                      <span className="text-primary font-weight-bold">{(supply.YUP.supply*0.0125).toFixed(0)}</span>
+                      <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Daily distribution</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{(supply.YUP.supply*0.0125).toFixed(0).numeral()} YUP</h2>
+                      <span className="text-dark-50 font-weight-bold">${(gecko.market_data.current_price.usd*supply.YUP.supply*0.0125).toFixed(0).numeral()}</span>
                     </td>
 
                   </tr>

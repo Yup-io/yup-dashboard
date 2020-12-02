@@ -14,7 +14,7 @@ export function getInitLayoutConfig() {
         theme: {
           base: {
             "white": "#ffffff",
-            "primary": "#6993FF",
+            "primary": "#1BC5BD",
             "secondary": "#E5EAEE",
             "success": "#1BC5BD",
             "info": "#8950FC",
@@ -112,7 +112,7 @@ export function getInitLayoutConfig() {
       fixed: true,
       width: "fluid", // fixed/fluid,
       clear: false,
-      style: "solid" // solid/transparent
+      style: "transparent" // solid/transparent
     },
     content: {
       width: "fixed" // fluid|fixed
