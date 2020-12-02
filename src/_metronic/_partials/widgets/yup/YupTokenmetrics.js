@@ -76,7 +76,7 @@ class YupTokenmetrics extends Component {
           (result) => {
             console.log(result)
             resolve(result)
-    
+
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow
@@ -86,7 +86,7 @@ class YupTokenmetrics extends Component {
           })
           })
           }
-    
+
   render() {
 
     const { error, isLoaded, supply, gecko, yupActions } = this.state;
@@ -114,16 +114,16 @@ class YupTokenmetrics extends Component {
                   <tr>
                     <td >
                       <div>
-                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Yup price</span>
+                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">YUP price</span>
                       <h4 className="text-success d-block mb-0 pt-2 pb-2"> ${gecko.market_data.current_price.usd.toFixed(2)} <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h4>
                       <span className="text-primary font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply).toFixed(0)}</span>
                       </div>
                     </td>
                     <td >
 
-                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Cirulating supply</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-2">{supply.YUP.supply}</h4>
-                      <span className="text-primary font-weight-bold">/{supply.YUP.max_supply}</span>
+                      <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Supply</span>
+                      <h4 className="text-success d-block mb-0 pt-2 pb-2">{supply.YUP.supply} YUP</h4>
+                      <span className="text-primary font-weight-bold">/{supply.YUP.max_supply} YUP Total</span>
                     </td>
                     <td>
                     <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Transactions</span>
@@ -132,8 +132,8 @@ class YupTokenmetrics extends Component {
                     </td>
                     <td>
                       <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Daily distribution</span>
-                      <h4 className="text-success d-block mb-0 pt-2 pb-2">1.25%</h4>
-                      <span className="text-primary font-weight-bold">{(supply.YUP.supply*0.0125).toFixed(0)}</span>
+                      <h4 className="text-success d-block mb-0 pt-2 pb-2">{(supply.YUP.supply*0.0125).toFixed(0)} YUP</h4>
+                      <span className="text-primary font-weight-bold">1.25%</span>
                     </td>
 
                   </tr>

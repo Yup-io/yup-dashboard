@@ -37,13 +37,13 @@ class YupFeedTableWidget extends Component {
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-  
+
     console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
     if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false
       });
-      
+
       await items.actions.forEach(vote => {
         fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
         method: 'GET'
@@ -129,7 +129,7 @@ class YupFeedTableWidget extends Component {
           {/* Head */}
           <div className="card-header border-0 py-5">
             <h2 className="card-title align-items-start flex-column">
-              <span className="card-label font-weight-bolder text-dark">Yup feed</span>
+              <span className="card-label font-weight-bolder text-dark">Actions</span>
             </h2>
           </div>
           {/* Body */}
@@ -175,9 +175,8 @@ class YupFeedTableWidget extends Component {
                       </span>
                         </td>
                         <td>
-                          <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
-                           {item.vote.act.data.voter}
-                      </span>
+                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 font-weight-bolder d-block font-size-lg">{item.vote.act.data.voter}
+                           </a>
                         </td>
                         <td>
                           <a href={item.post.previewData.url} className="text-primary  font-weight-bolder d-block font-size-lg">
