@@ -126,7 +126,7 @@ class YupTokenmetrics extends Component {
                       <span className="text-primary font-weight-bold">/{supply.YUP.max_supply}</span>
                     </td>
                     <td>
-                    <span className="text-dark-75 font-weight-bolder d-block font-size-lg">YUP Actions</span>
+                    <span className="text-dark-75 font-weight-bolder d-block font-size-lg">Transactions</span>
                       <h4 className="text-success d-block mb-0 pt-2 pb-8">{yupActions}</h4>
                       <span className="text-primary font-weight-bold"></span>
                     </td>
