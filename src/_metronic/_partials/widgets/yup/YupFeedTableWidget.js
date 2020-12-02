@@ -2,6 +2,13 @@
 import React, { Component } from "react";
 import {Pagination} from "react-bootstrap";
 import { Loader } from './loader'
+import './custom.css'
+
+const styles = theme => ({
+  Category: {
+    marginBottom: '0px'
+  }
+})
 
 class YupFeedTableWidget extends Component {
   constructor(props) {
@@ -157,40 +164,40 @@ class YupFeedTableWidget extends Component {
                           <div className="d-flex align-items-center">
                             <div><span>
                             {item.vote.act.data.category == 'intelligence' &&
-                              <h3>💡</h3>
+                              <h3 className="category-emoji">💡</h3>
                             }
                             {item.vote.act.data.category == 'funny' &&
-                              <h3>😂</h3>
+                              <h3 className="category-emoji">😂</h3>
                             }
                             {item.vote.act.data.category == 'popularity' &&
-                              <h3>❤️</h3>
+                              <h3 className="category-emoji">❤️</h3>
                             }
                             </span>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <span className="text-dark-75 font-weight-bolder d-block font-size-lg">
-                           {new Date(parseInt(item.vote.timestamp)).toLocaleTimeString()}
+                          <span className="text-dark-75 d-block font-size-lg">
+                           {new Date(item.vote.timestamp).toLocaleDateString()} {new Date(item.vote.timestamp).toLocaleTimeString()}
                       </span>
                         </td>
                         <td>
-                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 font-weight-bolder d-block font-size-lg">{item.vote.act.data.voter}
+                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">{item.vote.act.data.voter}
                            </a>
                         </td>
                         <td>
-                          <a href={item.post.previewData.url} className="text-primary  font-weight-bolder d-block font-size-lg">
+                          <a href={item.post.previewData.url} className="text-primary d-block font-size-lg">
                            {item.post.previewData.title.substring(0, 30)}
                            {item.post.previewData.title.length>29 && '...'}
                       </a>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
+                          <span className="text-dark-75 text-left d-block font-size-lg">
                           {this.createRating(item.vote.act.data.rating)}
                           </span>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left font-weight-bolder d-block font-size-lg">
+                          <span className="text-dark-75 text-left d-block font-size-lg">
                           {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
                       </span>
                         </td>
