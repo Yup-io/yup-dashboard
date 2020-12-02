@@ -44,8 +44,8 @@ class YupFeedTableWidget extends Component {
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-
     console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
+    //Checks if items for this page dont exist or if the first items isnt the same -> makes api calls
     if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false

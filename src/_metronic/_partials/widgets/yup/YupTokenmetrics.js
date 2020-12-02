@@ -20,16 +20,24 @@ class YupTokenmetrics extends Component {
       gecko: null,
       yupActions: null
     };
+    
+    this.getAllData = this.getAllData.bind(this);
+    this.getSupply = this.getSupply.bind(this);
+    this.getGeckoData = this.getGeckoData.bind(this);
+    this.getActionsCount = this.getActionsCount.bind(this);
+    
   }
 
-  async componentDidMount() {
-    let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);
-    console.log(supply,gecko, yupActions)
+   componentDidMount() {
+    setInterval(this.getAllData, 10000);
+  }
+  async getAllData(){
+    let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);    
     this.setState({
-      isLoaded: true,
       gecko: gecko,
       supply: supply,
-      yupActions: yupActions
+      yupActions: yupActions,
+      isLoaded:true
     });
   }
   async getSupply(){
@@ -75,14 +83,13 @@ class YupTokenmetrics extends Component {
       })
       }
 
-      async getActionsCount(){
+      async getActionsCount(){  
         return new Promise( (resolve, reject) =>{ fetch("https://api.yup.io/accounts/actions-count")
         .then(res => res.json())
         .then(
           (result) => {
-            console.log(result)
             resolve(result)
-
+    
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow
@@ -103,8 +110,8 @@ class YupTokenmetrics extends Component {
       return <div>Loading...</div>;
     } else {
       console.log(gecko, supply)
-      supply.YUP.supply =  parseInt(supply.YUP.supply.split(" ")[0])
-      supply.YUP.max_supply =  parseInt(supply.YUP.max_supply.split(" ")[0])
+      supply.YUP.supply =  parseInt(supply.YUP.supply)
+      supply.YUP.max_supply =  parseInt(supply.YUP.max_supply)
       let priceChangeColor ='success';
       if ( gecko.market_data.price_change_24h <0) {
         priceChangeColor = 'danger';
