@@ -20,42 +20,66 @@ class YupFeedTableWidget extends Component {
       page: 1
     };
     this.updateData = this.updateData.bind(this);
+    this.getCreateVoteV3 = this.getCreateVoteV3.bind(this);
+    this.getPostVoteV2 = this.getPostVoteV2.bind(this);
   }
 
   componentDidMount() {
-    this.updateData(1, 10)
-   setInterval(this.updateData.bind(null, 1, 10), 60000);
+    this.updateData(1, 50)
+  // setInterval(this.updateData.bind(null, 1, 50), 60000);
 
   }
   async updateData(page, limit) {
-    console.log(page,limit)
-    let skip = (page-1)*limit
-    fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc", {
-      method: 'GET'
-    })
+    
+    let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);   
+    let allVotes = createVoteV3.actions.concat(postVoteV2.actions)
+    allVotes.sort(function(a, b){return new Date(b.timestamp) - new Date(a.timestamp)});
+    let items = allVotes.slice(10*(page-1),(10*page))
+   this.getPostData(page, items)
+  
+  }
+
+  async getCreateVoteV3(skip, limit){
+    return new Promise( (resolve, reject) =>{ fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        resolve(result)
+      },
+      (error) => {
+        reject(error)
+      })
+      })
+    }
+  async getPostVoteV2(skip, limit){
+      return new Promise( (resolve, reject) =>{ fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Apostvotev2&skip="+skip+"&limit="+limit+"&sort=desc")
       .then(res => res.json())
       .then(
         (result) => {
-         this.getPostData(parseInt(page),result)
-        }
-      )
-  }
-
+          resolve(result)
+        },
+        (error) => {
+          reject(error)
+        })
+        })
+    }
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-    console.log(page, items.actions, this.state.items, items.actions[0].global_sequence )
+    console.log(page, items, this.state.items, items[0].global_sequence )
     //Checks if items for this page dont exist or if the first items isnt the same -> makes api calls
-    if(!this.state.items[page] || items.actions[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
+    if(!this.state.items[page] || items[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
         isLoaded: false
       });
 
-      await items.actions.forEach(vote => {
-        fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
+      await items.forEach(async vote => {
+      if(vote.act.data.postid){
+       await fetch("https://api.yup.io/posts/post/"+vote.act.data.postid, {
         method: 'GET'
       })
-        .then(res => {try {
+        .then(res => {
+          try {
           return res.json()
         }
         catch(e){
@@ -68,20 +92,37 @@ class YupFeedTableWidget extends Component {
       })
         .then( (result) => {
           if(result){
-          fullData.push({vote: vote, post:result})
-          itemsProcessed++;
-          if(itemsProcessed === items.actions.length) {
-            let newItems = this.state.items
-            newItems[page] = fullData
-            console.log(newItems)
-            this.setState({
-              isLoaded: true,
-              items: newItems,
-              page: page
-            });
-          }
+          fullData.push({
+            post:{
+            caption:result.previewData.url,
+            tag: result.tag
+          },        
+          vote: vote
+        })
         }
         })
+      }
+      else {
+        fullData.push({
+          vote: vote, 
+          post:{
+          caption:vote.act.data.caption,
+          tag: vote.act.data.tag
+        },        
+        vote: vote
+      })
+      }
+      itemsProcessed++;
+      if(itemsProcessed === items.length) {
+        fullData.sort(function(a, b){return new Date(b.vote.timestamp).getTime() - new Date(a.vote.timestamp).getTime()});        
+        let newItems = this.state.items
+        newItems[page] = fullData
+        this.setState({
+          isLoaded: true,
+          items: newItems,
+          page: page
+        });
+      }
       })
     }
 
@@ -124,9 +165,7 @@ class YupFeedTableWidget extends Component {
 
   }
   render() {
-    console.log(Loader)
     const { error, isLoaded, items } = this.state;
-    console.log(items)
     if (error) {
       return <div>Error: {error.message}</div>;
     }
@@ -187,9 +226,9 @@ class YupFeedTableWidget extends Component {
                            </a>
                         </td>
                         <td>
-                          <a href={item.post.previewData.url} className="text-primary d-block font-size-lg">
-                           {item.post.previewData.title.substring(0, 30)}
-                           {item.post.previewData.title.length>29 && '...'}
+                          <a href={item.post.caption} className="text-primary d-block font-size-lg">
+                           {item.post.caption.substring(0, 30)}
+                           {item.post.caption.length>29 && '...'}
                       </a>
                         </td>
                         <td>
@@ -219,11 +258,11 @@ class YupFeedTableWidget extends Component {
           <div className="separator separator-dashed my-7"></div>
               <Pagination className="float-right" size="lg">
                 <Pagination.Prev />
-                <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,10)}>{1}</Pagination.Item>
-                <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,10)}>{2}</Pagination.Item>
-                <Pagination.Item active={this.state.page==3} onClick={() =>this.updateData(3,10)}>{3}</Pagination.Item>
-                <Pagination.Item active={this.state.page==4}  onClick={() =>this.updateData(4,10)}>{4}</Pagination.Item>
-                <Pagination.Item active={this.state.page==5}  onClick={() =>this.updateData(5,10)}>{5}</Pagination.Item>
+                <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,50)}>{1}</Pagination.Item>
+                <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,50)}>{2}</Pagination.Item>
+                <Pagination.Item active={this.state.page==3} onClick={() =>this.updateData(3,50)}>{3}</Pagination.Item>
+                <Pagination.Item active={this.state.page==4}  onClick={() =>this.updateData(4,50)}>{4}</Pagination.Item>
+                <Pagination.Item active={this.state.page==5}  onClick={() =>this.updateData(5,50)}>{5}</Pagination.Item>
                 <Pagination.Next />
               </Pagination>
           </div>

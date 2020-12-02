@@ -29,7 +29,7 @@ class YupTokenmetrics extends Component {
   }
 
    componentDidMount() {
-    setInterval(this.getAllData, 10000);
+    setInterval(this.getAllData, 30000);
   }
   async getAllData(){
     let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);    
