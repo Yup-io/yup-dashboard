@@ -34,11 +34,19 @@ class YupFeedTableWidget extends Component {
     let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);   
     let allVotes = createVoteV3.actions.concat(postVoteV2.actions)
     allVotes.sort(function(a, b){return new Date(b.timestamp) - new Date(a.timestamp)});
+    allVotes.forEach(item => {
+      item.timestamp = this.convertUTCDateToLocalDate(new Date(item.timestamp))
+    })
     let items = allVotes.slice(10*(page-1),(10*page))
    this.getPostData(page, items)
   
   }
 
+
+  convertUTCDateToLocalDate(date) {
+      var newDate = new Date(date.getTime() - date.getTimezoneOffset()*60*1000);
+      return newDate;   
+  }
   async getCreateVoteV3(skip, limit){
     return new Promise( (resolve, reject) =>{ fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc")
     .then(res => res.json())
