@@ -58,7 +58,7 @@ export function SubHeader() {
                 </button>
             )}
 
-            <div className="d-flex align-items-baseline mr-5">
+            <div className="d-flex align-items-center mr-5">
               <h5 className="text-dark font-weight-bold my-2 mr-5">
                 <>
                   {subheader.title}
@@ -66,10 +66,12 @@ export function SubHeader() {
                 {/*<small></small>*/}
               </h5>
 
+              <p className="text-dark-25 my-2 mr-5">
+                Yup Protocol Explorer
+              </p>
+
             </div>
-
-
-            <BreadCrumbs items={subheader.breadcrumbs} />
+            {/*<BreadCrumbs items={subheader.breadcrumbs} />*/}
           </div>
 
           {/* Toolbar

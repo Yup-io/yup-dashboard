@@ -5,7 +5,7 @@ import YupToplist from "../../_metronic/_partials/widgets/yup/YupToplist";
 import YupFeedTableWidget from "../../_metronic/_partials/widgets/yup/YupFeedTableWidget";
 export const YupPage = () => {
   const suhbeader = useSubheader();
-  suhbeader.setTitle("Yup Info");
+  suhbeader.setTitle("Yup.Info");
   return (<>
      <div className="row">
   <div className="col-lg-12 col-xxl-12">
