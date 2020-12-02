@@ -49,7 +49,7 @@ class YupFeedTableWidget extends Component {
         method: 'GET'
       })
         .then(res => {try {
-          res.json()
+          return res.json()
         }
         catch(e){
           console.log(e)
