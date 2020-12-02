@@ -182,7 +182,7 @@ class YupFeedTableWidget extends Component {
                       </span>
                         </td>
                         <td>
-                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">{item.vote.act.data.voter}
+                          <a target="_blank" href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">{item.vote.act.data.voter}
                            </a>
                         </td>
                         <td>
