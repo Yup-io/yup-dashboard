@@ -136,7 +136,7 @@ class YupFeedTableWidget extends Component {
           {/* Head */}
           <div className="card-header border-0 py-5">
             <h2 className="card-title align-items-start flex-column">
-              <span className="card-label font-weight-bolder text-dark">Actions</span>
+              <span className="card-label font-weight-bolder text-dark">History</span>
             </h2>
           </div>
           {/* Body */}
@@ -210,14 +210,14 @@ class YupFeedTableWidget extends Component {
                 </table>
 
               </div>
-              <div className="d-flex justify-content-center ">
+              <div className="d-flex justify-content-center">
               { !isLoaded &&
                     <Loader src="/yup.svg" />
                   }
                   </div>
             </div>
           <div className="separator separator-dashed my-7"></div>
-              <Pagination className="float-right">
+              <Pagination className="float-right" size="lg">
                 <Pagination.Prev />
                 <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,10)}>{1}</Pagination.Item>
                 <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,10)}>{2}</Pagination.Item>
