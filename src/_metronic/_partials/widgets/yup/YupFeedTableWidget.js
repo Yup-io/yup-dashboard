@@ -2,7 +2,8 @@
 import React, { Component } from "react";
 import {Pagination} from "react-bootstrap";
 import { Loader } from './loader'
-import './custom.css'
+import './custom.css';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const styles = theme => ({
   Category: {
@@ -194,10 +195,10 @@ class YupFeedTableWidget extends Component {
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
                     <tr className="text-left">
-                      <th className="text-left pl-5">Time</th>
+                      <th className="text-left">Time</th>
                       <th className="text-left">User</th>
                       <th >Content</th>
-                      <th className="text-left pl-5">Rating</th>
+                      <th className="text-left">Rating</th>
                       <th className="text-left">Platform</th>
                     </tr>
                   </thead>
@@ -256,7 +257,38 @@ class YupFeedTableWidget extends Component {
               </div>
               <div className="d-flex justify-content-center">
               { !isLoaded &&
-                    <Loader src="/yup.svg" />
+                    <span style={{ width: "100%" }} className="text-dark-75 font-size-lg pr-5">
+                      <h1>
+                       <Skeleton />
+                       </h1>
+                       <h1>
+                        <Skeleton />
+                        </h1>
+                      <h1>
+                       <Skeleton />
+                       </h1>
+                       <h1>
+                        <Skeleton />
+                        </h1>
+                      <h1>
+                       <Skeleton />
+                       </h1>
+                       <h1>
+                        <Skeleton />
+                        </h1>
+                      <h1>
+                       <Skeleton />
+                       </h1>
+                       <h1>
+                        <Skeleton />
+                        </h1>
+                      <h1>
+                       <Skeleton />
+                       </h1>
+                       <h1>
+                        <Skeleton />
+                      </h1>
+                    </span>
                   }
                   </div>
             </div>

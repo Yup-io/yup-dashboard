@@ -3,6 +3,7 @@
 import { NaturePeopleOutlined } from '@material-ui/icons';
 import React, { Component } from 'react';
 import { actions } from '../../../../app/modules/Auth/_redux/authRedux';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 String.prototype.numeral = function () {
     return this.replace(/(^|[^\w.])(\d{4,})/g, function($0, $1, $2) {
@@ -20,19 +21,19 @@ class YupTokenmetrics extends Component {
       gecko: null,
       yupActions: null
     };
-    
+
     this.getAllData = this.getAllData.bind(this);
     this.getSupply = this.getSupply.bind(this);
     this.getGeckoData = this.getGeckoData.bind(this);
     this.getActionsCount = this.getActionsCount.bind(this);
-    
+
   }
 
    componentDidMount() {
     setInterval(this.getAllData, 30000);
   }
   async getAllData(){
-    let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);    
+    let [supply, gecko, yupActions]= await Promise.all([this.getSupply(), this.getGeckoData(), this.getActionsCount()]);
     this.setState({
       gecko: gecko,
       supply: supply,
@@ -83,13 +84,13 @@ class YupTokenmetrics extends Component {
       })
       }
 
-      async getActionsCount(){  
+      async getActionsCount(){
         return new Promise( (resolve, reject) =>{ fetch("https://api.yup.io/accounts/actions-count")
         .then(res => res.json())
         .then(
           (result) => {
             resolve(result)
-    
+
           },
           // Note: it's important to handle errors here
           // instead of a catch() block so that we don't swallow
@@ -107,7 +108,44 @@ class YupTokenmetrics extends Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
-      return <div>Loading...</div>;
+      return <div className={`card card-custom card-stretch gutter-b`}>
+        <div className="card-body p-4">
+          <div className="tab-content">
+            <div className="table-responsive"></div>
+            <table className="table table-head-custom table-head-bg table-borderless table-vertical-center mb-0">
+
+              <tbody>
+                <tr>
+                  <td >
+                    <div>
+                    <span className="text-dark-25 font-weight-bolder d-block font-size-lg">YUP price</span>
+                    <h2 className="text-secondary d-block mb-0 pt-2 pb-2"> {!isLoaded ? <Skeleton /> : 'h2'} </h2>
+                    <span className="text-dark-50 font-weight-bold"> {!isLoaded ? <Skeleton /> : 'h5'} </span>
+                    </div>
+                  </td>
+                  <td >
+
+                    <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Supply</span>
+                    <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{!isLoaded ? <Skeleton /> : 'h2'}</h2>
+                    <span className="text-dark-50 font-weight-bold">{!isLoaded ? <Skeleton /> : 'h5'}</span>
+                  </td>
+                  <td>
+                  <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Transactions</span>
+                    <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{!isLoaded ? <Skeleton /> : 'h2'}</h2>
+                    <span className="text-dark-50 font-weight-bold">{!isLoaded ? <Skeleton /> : 'h5'}</span>
+                  </td>
+                  <td>
+                    <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Daily distribution</span>
+                    <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{!isLoaded ? <Skeleton /> : 'h2'}</h2>
+                    <span className="text-dark-50 font-weight-bold">{!isLoaded ? <Skeleton /> : 'h5'}</span>
+                  </td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>;
     } else {
       console.log(gecko, supply)
       supply.YUP.supply =  parseInt(supply.YUP.supply)
