@@ -8,7 +8,7 @@ import {Button,Jumbotron} from "react-bootstrap";
 
 export const YupPage = () => {
   const suhbeader = useSubheader();
-suhbeader.setTitle("📊 Yup.Info");
+suhbeader.setTitle("📊 Yup Live");
   return (<>
      <div className="row">
   <div className="col-lg-12 col-xxl-12">
