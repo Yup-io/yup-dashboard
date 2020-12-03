@@ -145,7 +145,27 @@ class YupFeedTableWidget extends Component {
     }
 
   }
-
+  nextPage(){
+    if(this.state.page<5){
+      let page = this.state.page+1
+      this.setState({
+        isLoaded: false,
+        page: page
+      });
+      console.log(page)
+      this.updateData(page,50)
+    }
+ }
+ lastPage(){
+  if(this.state.page>1){
+    let page = this.state.page-1
+    this.setState({
+      isLoaded: false,
+      page: page
+    });
+    this.updateData(page,50)
+  }
+}
   createRating(n){
     var ratingMap = {
       "-2": "1",
@@ -294,13 +314,13 @@ class YupFeedTableWidget extends Component {
             </div>
           <div className="separator separator-dashed my-7"></div>
               <Pagination className="float-right" size="lg">
-                <Pagination.Prev />
+                <Pagination.Prev onClick={() =>this.lastPage() } />
                 <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,50)}>{1}</Pagination.Item>
                 <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,50)}>{2}</Pagination.Item>
                 <Pagination.Item active={this.state.page==3} onClick={() =>this.updateData(3,50)}>{3}</Pagination.Item>
                 <Pagination.Item active={this.state.page==4}  onClick={() =>this.updateData(4,50)}>{4}</Pagination.Item>
                 <Pagination.Item active={this.state.page==5}  onClick={() =>this.updateData(5,50)}>{5}</Pagination.Item>
-                <Pagination.Next />
+                <Pagination.Next onClick={() => this.nextPage()}/>
               </Pagination>
           </div>
         </div>
