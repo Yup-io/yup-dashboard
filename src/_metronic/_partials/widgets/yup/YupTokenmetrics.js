@@ -30,6 +30,7 @@ class YupTokenmetrics extends Component {
   }
 
    componentDidMount() {
+     this.getAllData()
     setInterval(this.getAllData, 30000);
   }
   async getAllData(){
@@ -43,7 +44,7 @@ class YupTokenmetrics extends Component {
   }
   async getSupply(){
    return new Promise( (resolve, reject) =>{
-      fetch("http://api.eosn.io/v1/chain/get_currency_stats",   {method: 'POST',
+      fetch("https://api.eosn.io/v1/chain/get_currency_stats",   {method: 'POST',
       headers: {
        'Content-Type': 'application/json;charset=utf-8'
      },
