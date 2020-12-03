@@ -23,11 +23,7 @@ export default function BasePage() {
     return (
         <Suspense fallback={<LayoutSplashScreen/>}>
             <Switch>
-                {
-                    /* Redirect from root URL to /dashboard. */
-                    <Redirect exact from="/" to="/dashboard"/>
-                }
-                <ContentRoute path="/dashboard" component={YupPage}/>
+                <ContentRoute path="/" component={YupPage}/>
                {/* <ContentRoute path="/builder" component={BuilderPage}/>
                 <ContentRoute path="/my-page" component={YupPage}/>
                 <Route path="/google-material" component={GoogleMaterialPage}/>
