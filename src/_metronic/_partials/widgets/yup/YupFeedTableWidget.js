@@ -30,8 +30,8 @@ class YupFeedTableWidget extends Component {
 
   }
   async updateData(page, limit) {
-    
-    let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);   
+
+    let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);
     let allVotes = createVoteV3.actions.concat(postVoteV2.actions)
     allVotes.sort(function(a, b){return new Date(b.timestamp) - new Date(a.timestamp)});
     allVotes.forEach(item => {
@@ -39,13 +39,13 @@ class YupFeedTableWidget extends Component {
     })
     let items = allVotes.slice(10*(page-1),(10*page))
    this.getPostData(page, items)
-  
+
   }
 
 
   convertUTCDateToLocalDate(date) {
       var newDate = new Date(date.getTime() - date.getTimezoneOffset()*60*1000);
-      return newDate;   
+      return newDate;
   }
   async getCreateVoteV3(skip, limit){
     return new Promise( (resolve, reject) =>{ fetch("https://eos.hyperion.eosrio.io/v2/history/get_actions?account=yupyupyupyup&filter=*%3Acreatevotev3&skip="+skip+"&limit="+limit+"&sort=desc")
@@ -104,7 +104,7 @@ class YupFeedTableWidget extends Component {
             post:{
             caption:result.previewData.url,
             tag: result.tag
-          },        
+          },
           vote: vote
         })
         }
@@ -112,17 +112,17 @@ class YupFeedTableWidget extends Component {
       }
       else {
         fullData.push({
-          vote: vote, 
+          vote: vote,
           post:{
           caption:vote.act.data.caption,
           tag: vote.act.data.tag
-        },        
+        },
         vote: vote
       })
       }
       itemsProcessed++;
       if(itemsProcessed === items.length) {
-        fullData.sort(function(a, b){return new Date(b.vote.timestamp).getTime() - new Date(a.vote.timestamp).getTime()});        
+        fullData.sort(function(a, b){return new Date(b.vote.timestamp).getTime() - new Date(a.vote.timestamp).getTime()});
         let newItems = this.state.items
         newItems[page] = fullData
         this.setState({
@@ -194,7 +194,6 @@ class YupFeedTableWidget extends Component {
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
                     <tr className="text-left">
-                      <th className="pl-7"> </th>
                       <th className="text-left pl-5">Time</th>
                       <th className="text-left">User</th>
                       <th >Content</th>
@@ -207,7 +206,23 @@ class YupFeedTableWidget extends Component {
 
                     {items[this.state.page].map(item => (
                       <tr key={item.vote.global_sequence}>
-                        <td className="pl-7">
+                        <td>
+                          <span className="text-dark-75 d-block font-size-lg">
+                           {new Date(item.vote.timestamp).toLocaleDateString()} {new Date(item.vote.timestamp).toLocaleTimeString()}
+                          </span>
+                        </td>
+                        <td>
+                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">
+                            {item.vote.act.data.voter}
+                           </a>
+                        </td>
+                        <td>
+                          <a href={item.post.caption} className="text-primary d-block font-size-lg">
+                           {item.post.caption.substring(0, 30)}
+                           {item.post.caption.length>29 && '...'}
+                          </a>
+                        </td>
+                        <td>
                           <div className="d-flex align-items-center">
                             <div><span>
                             {item.vote.act.data.category == 'intelligence' &&
@@ -221,33 +236,15 @@ class YupFeedTableWidget extends Component {
                             }
                             </span>
                             </div>
+                            <span className="text-dark-75 text-left font-size-lg" style={{ marginTop: '-1px' }}>
+                            {this.createRating(item.vote.act.data.rating)}
+                            </span>
                           </div>
-                        </td>
-                        <td>
-                          <span className="text-dark-75 d-block font-size-lg">
-                           {new Date(item.vote.timestamp).toLocaleDateString()} {new Date(item.vote.timestamp).toLocaleTimeString()}
-                      </span>
-                        </td>
-                        <td>
-                          <a href={`https://app.yup.io/${item.vote.act.data.voter}`} className="text-dark-75 d-block font-size-lg">
-                            {item.vote.act.data.voter}
-                           </a>
-                        </td>
-                        <td>
-                          <a href={item.post.caption} className="text-primary d-block font-size-lg">
-                           {item.post.caption.substring(0, 30)}
-                           {item.post.caption.length>29 && '...'}
-                      </a>
-                        </td>
-                        <td>
-                          <span className="text-dark-75 text-left d-block font-size-lg">
-                          {this.createRating(item.vote.act.data.rating)}
-                          </span>
                         </td>
                         <td>
                           <span className="text-dark-75 text-left d-block font-size-lg">
                           {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
-                      </span>
+                          </span>
                         </td>
                       </tr>
                     ))}
