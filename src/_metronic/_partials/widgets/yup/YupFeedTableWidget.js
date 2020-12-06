@@ -167,14 +167,25 @@ class YupFeedTableWidget extends Component {
   }
 }
   createRating(n){
+    console.log(n)
+    let rating = n.rating
+    let like = n.like
+    console.log(n, rating, like)
     var ratingMap = {
-      "-2": "1",
-      "-1": "2",
       "1": "3",
       "2": "4",
       "3": "5",
+    } 
+    var ratingMapFalse = {
+      "1": "2",
+      "2": "1",
     }
-    n= ratingMap[n]
+    if(like){
+      rating= ratingMap[rating]
+    }
+    else {
+      rating= ratingMapFalse[rating]
+    }
     var elements = [];
     var colorMap = {
       "1": "#BE1E2D",
@@ -183,9 +194,9 @@ class YupFeedTableWidget extends Component {
       "4": "#7FBA1B",
       "5": "#00EAB7",
     };
-    for(let i =0; i < n; i++){
+    for(let i =0; i < rating; i++){
         elements.push( <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20px" height="20px">
-        <g fill={colorMap[n]}   > <circle cx="50%" cy="50%" r="25" /></g>
+        <g fill={colorMap[rating]}   > <circle cx="50%" cy="50%" r="25" /></g>
       </svg>);
     }
     return elements;
@@ -258,7 +269,7 @@ class YupFeedTableWidget extends Component {
                             </span>
                             </div>
                             <span className="text-dark-75 text-left font-size-lg" style={{ marginTop: '-1px' }}>
-                            {this.createRating(item.vote.act.data.rating)}
+                            {this.createRating(item.vote.act.data)}
                             </span>
                           </div>
                         </td>
