@@ -75,7 +75,6 @@ class YupFeedTableWidget extends Component {
   async getPostData(page,items) {
     let fullData = [];
     var itemsProcessed = 0;
-    console.log(page, items, this.state.items, items[0].global_sequence )
     //Checks if items for this page dont exist or if the first items isnt the same -> makes api calls
     if(!this.state.items[page] || items[0].global_sequence!=this.state.items[page][0].vote.global_sequence){
       this.setState({
@@ -136,7 +135,6 @@ class YupFeedTableWidget extends Component {
     }
 
     else{
-      console.log("same items")
       this.setState({
         isLoaded: true,
         page: page
@@ -152,7 +150,6 @@ class YupFeedTableWidget extends Component {
         isLoaded: false,
         page: page
       });
-      console.log(page)
       this.updateData(page,50)
     }
  }
@@ -167,10 +164,8 @@ class YupFeedTableWidget extends Component {
   }
 }
   createRating(n){
-    console.log(n)
     let rating = n.rating
     let like = n.like
-    console.log(n, rating, like)
     var ratingMap = {
       "1": "3",
       "2": "4",
