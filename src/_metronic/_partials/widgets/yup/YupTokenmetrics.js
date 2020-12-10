@@ -86,7 +86,7 @@ class YupTokenmetrics extends Component {
       }
 
       async getActionsCount(){
-        return new Promise( (resolve, reject) =>{ fetch("https://api.yup.io/accounts/actions-count")
+        return new Promise( (resolve, reject) =>{ fetch("https://api.yup.io/metrics/total-votes")
         .then(res => res.json())
         .then(
           (result) => {
@@ -105,7 +105,7 @@ class YupTokenmetrics extends Component {
   render() {
 
     const { error, isLoaded, supply, gecko, yupActions } = this.state;
-
+    console.log(yupActions)
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
@@ -167,25 +167,25 @@ class YupTokenmetrics extends Component {
                     <td >
                       <div>
                       <span className="text-dark-25 font-weight-bolder d-block font-size-lg">YUP price</span>
-                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2"> ${gecko.market_data.current_price.usd.toFixed(2)} <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h2>
-                      <span className="text-dark-50 font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply).toFixed(0).numeral()}</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2"> ${gecko.market_data.current_price.usd?.toFixed(2)} <sup className={'text-'+ priceChangeColor +' font-size-sm'}>{Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%</sup> </h2>
+                      <span className="text-dark-50 font-weight-bold">Mcap: ${(gecko.market_data.current_price.usd*supply.YUP.supply)?.toFixed(0).numeral()}</span>
                       </div>
                     </td>
                     <td >
 
                       <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Supply</span>
-                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{supply.YUP.supply.toFixed(0).numeral()} YUP</h2>
-                      <span className="text-dark-50 font-weight-bold">/{supply.YUP.max_supply.toFixed(0).numeral()} YUP Total</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{supply.YUP.supply?.toFixed(0).numeral()} YUP</h2>
+                      <span className="text-dark-50 font-weight-bold">/{supply.YUP.max_supply?.toFixed(0).numeral()} YUP Total</span>
                     </td>
                     <td>
                     <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Transactions</span>
-                      <h2 className="text-secondary d-block mb-0 pt-2 pb-8">{yupActions.toFixed(0).numeral()}</h2>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-8">{yupActions?.toFixed(0).numeral()}</h2>
                       <span className="text-dark-50 font-weight-bold"></span>
                     </td>
                     <td>
                       <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Daily distribution</span>
-                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{(supply.YUP.supply*0.0125).toFixed(0).numeral()} YUP</h2>
-                      <span className="text-dark-50 font-weight-bold">${(gecko.market_data.current_price.usd*supply.YUP.supply*0.0125).toFixed(0).numeral()}</span>
+                      <h2 className="text-secondary d-block mb-0 pt-2 pb-2">{(supply.YUP.supply*0.0125)?.toFixed(0).numeral()} YUP</h2>
+                      <span className="text-dark-50 font-weight-bold">${(gecko.market_data.current_price.usd*supply.YUP.supply*0.0125)?.toFixed(0).numeral()}</span>
                     </td>
 
                   </tr>
