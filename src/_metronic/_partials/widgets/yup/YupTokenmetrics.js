@@ -105,7 +105,6 @@ class YupTokenmetrics extends Component {
   render() {
 
     const { error, isLoaded, supply, gecko, yupActions } = this.state;
-    console.log(yupActions)
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
