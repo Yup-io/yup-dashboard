@@ -100,9 +100,10 @@ class YupFeedTableWidget extends Component {
       })
         .then( (result) => {
           if(result){
+            console.log(result)
           fullData.push({
             post:{
-            caption:result.previewData.url,
+            caption:result.caption,
             tag: result.tag
           },
           vote: vote
