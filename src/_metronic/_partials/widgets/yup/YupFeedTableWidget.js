@@ -100,7 +100,6 @@ class YupFeedTableWidget extends Component {
       })
         .then( (result) => {
           if(result){
-            console.log(result)
           fullData.push({
             post:{
             caption:result.caption,
