@@ -1,10 +1,10 @@
-body { background-color:#fafafa; padding: 50px; }
+body { background-color:#fafafa; padding: 50px; font-family: Poppins, sans-sans-serif; }
 
 h1, h3, p { text-align:left; }
 
 #container { margin: auto; }
 
-.link { stroke: #2a2a2a77; stroke-width: 0.5px; }
+.link { stroke: #2a2a2a77; stroke-width: 0.75px; }
 
 #flags {
   position: absolute;
@@ -15,8 +15,8 @@ h1, h3, p { text-align:left; }
 	height: 10px;
   position: absolute;
 	background: radial-gradient(#0f0f0f 5%, #0f0f0f01 95%);
-  margin-top: 0px;
-  margin-left: 0px;
+  margin-top: -5px;
+  margin-left: -5px;
   border-radius: 200px;
   border: 0px solid #0f0f0f55;
 }
@@ -33,9 +33,10 @@ h1, h3, p { text-align:left; }
 */
 
 .tooltip {
-  background: black;
-  padding: 10px;
+  background: #dadada;
+  padding: 15px 20px;
   font-family: Poppins, sans-serif;
+  color: #090909;
   border-radius: 10px;
   font-weight: 500;
 }

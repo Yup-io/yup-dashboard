@@ -23,8 +23,8 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
     .nodes(d3.values(nodes))
     .links(links)
     .on("tick",tick)
-    .charge(-20)
-    .linkDistance(15)
+    .charge(-35)
+    .linkDistance(30)
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
@@ -109,5 +109,5 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
   }
 
   function mouseMoving (d) {
-      tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","white");
+      tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","#090909");
   }
