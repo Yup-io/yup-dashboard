@@ -61,15 +61,31 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
     .attr("class","link");
 
   // Now it's the nodes turn. Each node is drawn as a flag.
-  var node = d3.select('#flags').selectAll('div')
+  var node = d3.select('#nodes').selectAll('div')
     .data(force.nodes())
     .enter().append('div')
   //we return the exact flag of each node from the image
-    .attr('class', function (d) { return 'node' })
+    .attr('class', function (d) { return 'node node-' + d.group; })
   //we call some classes to handle the mouse
     .on('mouseover', mouseoverHandler)
     .on("mousemove",mouseMoving)
     .on("mouseout", mouseoutHandler);
+
+  //	filtered types
+  typeFilterList = [];
+
+  //	filter button event handlers
+  $(".filter-btn").on("click", function() {
+  	var id = $(this).attr("value");
+  	if (typeFilterList.includes(id)) {
+  		typeFilterList.splice(typeFilterList.indexOf(id), 1)
+  	} else {
+  		typeFilterList.push(id);
+  	}
+  	filter();
+  	update();
+  });
+
 
   // We're about to tell the force layout to start its
   // calculations. We do, however, want to know when those
@@ -111,3 +127,37 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
   function mouseMoving (d) {
       tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","#090909");
   }
+
+
+//	filter function
+function filter() {
+	//	add and remove nodes from data based on type filters
+	store.nodes.forEach(function(n) {
+		if (!typeFilterList.includes(n.group) && n.filtered) {
+			n.filtered = false;
+			graph.nodes.push($.extend(true, {}, n));
+		} else if (typeFilterList.includes(n.group) && !n.filtered) {
+			n.filtered = true;
+			graph.nodes.forEach(function(d, i) {
+				if (n.id === d.id) {
+					graph.nodes.splice(i, 1);
+				}
+			});
+		}
+	});
+
+	//	add and remove links from data based on availability of nodes
+	store.links1.forEach(function(l) {
+		if (!(typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && l.filtered) {
+			l.filtered = false;
+			graph.links1.push($.extend(true, {}, l));
+		} else if ((typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && !l.filtered) {
+			l.filtered = true;
+			graph.links1.forEach(function(d, i) {
+				if (l.id === d.id) {
+					graph.links1.splice(i, 1);
+				}
+			});
+		}
+	});
+}

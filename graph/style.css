@@ -4,9 +4,9 @@ h1, h3, p { text-align:left; }
 
 #container { margin: auto; }
 
-.link { stroke: #2a2a2a77; stroke-width: 0.75px; }
+.link { stroke: #aaaaaacc; stroke-width: 1px; }
 
-#flags {
+#nodes {
   position: absolute;
 }
 
@@ -19,6 +19,32 @@ h1, h3, p { text-align:left; }
   margin-left: -5px;
   border-radius: 200px;
   border: 0px solid #0f0f0f55;
+}
+
+.node-user {
+  width: 16px;
+	height: 16px;
+  background: radial-gradient(#dadada 5%, #3a3a3a01 95%);
+}
+
+.node-twitter {
+  width: 13px;
+	height: 13px;
+  background: radial-gradient(#1DA1F2 5%, #00eab701 95%);
+}
+
+.node-youtube {
+  width: 12px;
+	height: 12px;
+  background: radial-gradient(#c4302b 5%, #c4302b01 95%);
+}
+
+.node-reddit {
+  background: radial-gradient(orangered 5%, #c4302b01 95%);
+}
+
+.node-general {
+  background: radial-gradient(#3a3a3a 5%, #dadada01 95%);
 }
 
 /*
