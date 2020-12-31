@@ -1,0 +1,55 @@
+body { background-color:#fafafa; padding: 50px; }
+
+h1, h3, p { text-align:left; }
+
+#container { margin: auto; }
+
+.link { stroke: #090909; stroke-width: 0.5px; }
+
+#flags {
+  position: absolute;
+}
+
+.node {
+	width: 5px;
+	height: 5px;
+  position: absolute;
+	background: #000;
+/*  margin-top: -10px;
+  margin-left: -10px; */
+  border-radius: 200px;
+  border: 0.5px solid #dadada;
+}
+
+/*
+* find the flag-sprite here: https://www.flag-sprites.com/
+* create an image and downlaod the file...
+*
+* You don't have to upload your own image,
+* you can simply right click on the flag-sprites's image
+* and select copy image address.
+*
+* In flags.css (from the file you download) you can copy-paste the .flag.flag-ad section
+*/
+
+.tooltip {
+  background: black;
+  padding: 10px;
+  font-family: Poppins, sans-serif;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/*
+ * Footer
+ */
+a:link    {color:orangered;  text-decoration:none}
+a:visited {color:orangered; text-decoration:none}
+a:hover   {color:red; text-decoration:underline}
+
+.tableFooter{
+  margin-top: 15px;
+}
+.footerSvg{
+  width: 32px;
+}
