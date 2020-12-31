@@ -1,19 +1,17 @@
+
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var margin  = {top: 10, right: 5, bottom: 10, left: 100},
-    width   = 1400-margin.left-margin.right,
-    height  = 900-margin.top-margin.bottom;
+    width   = document.body.clientWidth-margin.left-margin.right,
+    height  = document.body.clientHeight-margin.top-margin.bottom;
 //We start off by creating an SVG
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
 var svg = d3.select("body").append("svg")
   .attr("width",width)
   .attr("height",height);
-
 //create the tooltip that holds the node name
 var tooltip = d3.select('body').append('div') .attr("class","tooltip");
-
-d3.json("https://raw.githubusercontent.com/Yup-io/d3-yup-graph/main/raw-votes.json?token=AIV6AOAERW3ZP6IGNGCZTGS76ZGDC",function(data){
   // Extract the nodes and links from the data.
   var nodes = data["nodes"];
   var links = data["links"];
@@ -113,4 +111,3 @@ d3.json("https://raw.githubusercontent.com/Yup-io/d3-yup-graph/main/raw-votes.js
   function mouseMoving (d) {
       tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","white");
   }
-})

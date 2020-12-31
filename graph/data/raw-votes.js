@@ -1,4 +1,4 @@
-{
+var data = {
 "nodes": [
     {
       "name": "https://www.linkedin.com/feed/"
