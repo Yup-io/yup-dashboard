@@ -11,7 +11,7 @@ var svg = d3.select("body").append("svg")
   .attr("width",width)
   .attr("height",height);
 //create the tooltip that holds the node name
-var tooltip = d3.select('body').append('div') .attr("class","tooltip");
+var tooltip = d3.select('body').append('div').attr("class","tooltip");
   // Extract the nodes and links from the data.
   var nodes = data["nodes"];
   var links = data["links"];
@@ -23,8 +23,8 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
     .nodes(d3.values(nodes))
     .links(links)
     .on("tick",tick)
-    .charge(-10)
-    .linkDistance(10)
+    .charge(-20)
+    .linkDistance(15)
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
