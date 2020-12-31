@@ -11,9 +11,9 @@ var svg = d3.select("body").append("svg")
   .attr("height",height);
 
 //create the tooltip that holds the node name
-var tooltip = d3.select('body').append('div') .attr("class","tooltip");
+var tooltip = d3.select('body').append('div').attr("class","tooltip");
 
-d3.json("https://raw.githubusercontent.com/Yup-io/d3-yup-graph/main/raw-votes.json?token=AIV6AOAERW3ZP6IGNGCZTGS76ZGDC",function(data){
+d3.json("https://raw.githubusercontent.com/Yup-io/yup-dashboard/pink-graph/graph/raw-votes.json",function(data){
   // Extract the nodes and links from the data.
   var nodes = data["nodes"];
   var links = data["links"];
