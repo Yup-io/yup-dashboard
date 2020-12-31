@@ -1,4 +1,7 @@
 let data = localData;
+let data2 = voteData;
+let data3 = handleData(data2)
+console.log(data3)
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var margin  = {top: 10, right: 5, bottom: 10, left: 100},
@@ -13,8 +16,8 @@ var svg = d3.select("body").append("svg")
 //create the tooltip that holds the node name
 var tooltip = d3.select('body').append('div') .attr("class","tooltip");
   // Extract the nodes and links from the data.
-  var nodes = data["nodes"];
-  var links = data["links"];
+  var nodes = data3["nodes"];
+  var links = data3["links"];
   // Now we create a force layout object and define its properties.
   // Those include the dimensions of the visualization and the arrays
   // of nodes and links.
@@ -111,3 +114,33 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
   function mouseMoving (d) {
       tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","white");
   }
+
+
+  function handleData(data){
+    let postNodes = [];    
+    let userNodes = [];
+    let links = [];
+   data.forEach(element => {
+     postNodes.push({
+       id:element.id,
+       Caption:element.Caption,       
+       Domain:element.Domain
+     })
+     userNodes.push({
+      name:element.Voter
+    })
+    links.push({
+      source:{
+        name:element.Voter
+      },
+      target:{id:element.id,
+      Caption:element.Caption,       
+      Domain:element.Domain}
+   })
+   })
+    postNodes = [...new Map(postNodes.map(item => [item["Caption"], item])).values()]
+   userNodes = [...new Map(userNodes.map(item => [item["name"], item])).values()]
+   Array.prototype.push.apply(postNodes,userNodes);
+   let nodes = postNodes
+   return {nodes, links}
+}  
