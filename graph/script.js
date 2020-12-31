@@ -1,4 +1,4 @@
-
+let data = localData;
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var margin  = {top: 10, right: 5, bottom: 10, left: 100},
