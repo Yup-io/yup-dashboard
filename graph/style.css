@@ -15,8 +15,8 @@ h1, h3, p { text-align:left; }
 	height: 5px;
   position: absolute;
 	background: #000;
-  margin-top: -5px;
-  margin-left: -5px;
+  margin-top: 0px;
+  margin-left: 0px;
   border-radius: 200px;
   border: 0.5px solid #dadada;
 }
