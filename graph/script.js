@@ -122,24 +122,19 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
     let links = [];
    data.forEach(element => {
      postNodes.push({
-       id:element.id,
-       Caption:element.Caption,       
+       id:element.Caption,
        Domain:element.Domain
      })
      userNodes.push({
-      name:element.Voter
+       id:element.Voter
     })
     links.push({
-      source:{
-        name:element.Voter
-      },
-      target:{id:element.id,
-      Caption:element.Caption,       
-      Domain:element.Domain}
+      source:element.Voter,
+      target:element.Caption
    })
    })
-    postNodes = [...new Map(postNodes.map(item => [item["Caption"], item])).values()]
-   userNodes = [...new Map(userNodes.map(item => [item["name"], item])).values()]
+    postNodes = [...new Map(postNodes.map(item => [item["id"], item])).values()]
+   userNodes = [...new Map(userNodes.map(item => [item["id"], item])).values()]
    Array.prototype.push.apply(postNodes,userNodes);
    let nodes = postNodes
    return {nodes, links}
