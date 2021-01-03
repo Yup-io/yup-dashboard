@@ -164,7 +164,7 @@ var link = svg.selectAll('.link')
 function filter(){
   console.log(typeFilterList)
   let filteredData = generateLinks(voteData, typeFilterList)
-  
+  console.log(filteredData)
 draw(filteredData)
 
 }
@@ -179,6 +179,7 @@ function generateLinks(data, filter){
   catch(e){
    // console.log(e)
   }
+  url = url? filterHostname(url.hostname) :"general"
    if(filter &&filter.includes("user")){
     nodes.push({
       name:element.Caption,
@@ -186,7 +187,6 @@ function generateLinks(data, filter){
     })
   }
   else { 
-  url = url? filterHostname(url.hostname) :"general"
   if(!filter || !filter.includes(url)){  
      nodes.push({
        name:element.Caption,
