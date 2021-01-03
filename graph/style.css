@@ -1,24 +1,48 @@
-body { background-color:#fafafa; padding: 50px; }
+body { background-color:#fafafa; padding: 50px; font-family: Poppins, sans-sans-serif; }
 
 h1, h3, p { text-align:left; }
 
 #container { margin: auto; }
 
-.link { stroke: #090909; stroke-width: 0.5px; }
+.link { stroke: #aaaaaacc; stroke-width: 1px; }
 
-#flags {
+#nodes {
   position: absolute;
 }
 
 .node {
-	width: 5px;
-	height: 5px;
+  width: 3px;
+	height: 3px;
   position: absolute;
-	background: #000;
-  margin-top: 0px;
-  margin-left: 0px;
+	background: #0f0f0f 5%;
   border-radius: 200px;
-  border: 0.5px solid #dadada;
+  border: 0px solid #0f0f0f55;
+}
+
+.node-user {
+  width: 4px;
+	height: 4px;
+  background: #dadada 5%;
+}
+
+.node-twitter {
+  width: 6px;
+	height: 6px;
+  background:#1DA1F2 5%;
+}
+
+.node-youtube {
+  width: 7px;
+	height: 7px;
+  background: #c4302b 5%;
+}
+
+.node-reddit {
+  background: orangered 5%;
+}
+
+.node-general {
+  background: #3a3a3a 5%;
 }
 
 /*
@@ -33,9 +57,10 @@ h1, h3, p { text-align:left; }
 */
 
 .tooltip {
-  background: black;
-  padding: 10px;
+  background: #dadada;
+  padding: 15px 20px;
   font-family: Poppins, sans-serif;
+  color: #090909;
   border-radius: 10px;
   font-weight: 500;
 }

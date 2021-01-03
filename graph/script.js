@@ -1,7 +1,4 @@
 let data = localData;
-let data2 = voteData;
-let data3 = handleData(data2)
-console.log(data3)
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var margin  = {top: 10, right: 5, bottom: 10, left: 100},
@@ -11,23 +8,25 @@ var margin  = {top: 10, right: 5, bottom: 10, left: 100},
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
 var svg = d3.select("body").append("svg")
-  .attr("width",width)
-  .attr("height",height);
+.attr("width",width)
+.attr("height",height);
 //create the tooltip that holds the node name
-var tooltip = d3.select('body').append('div') .attr("class","tooltip");
+var tooltip = d3.select('body').append('div').attr("class","tooltip");
   // Extract the nodes and links from the data.
-  var nodes = data3["nodes"];
-  var links = data3["links"];
   // Now we create a force layout object and define its properties.
   // Those include the dimensions of the visualization and the arrays
   // of nodes and links.
-  var force = d3.layout.force()
-    .size([width,height])
-    .nodes(d3.values(nodes))
-    .links(links)
-    .on("tick",tick)
-    .charge(-10)
-    .linkDistance(10)
+  
+  var simulation = d3.forceSimulation()
+  .force("charge", d3.forceManyBody().strength(-10))
+  .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
+  .force("x", d3.forceX(width / 2))
+  .force("y", d3.forceY(height / 2))
+  .on("tick", tick);
+  
+  simulation.nodes(data.nodes);
+  console.log(data.nodes)
+  simulation.force("link").links(data.links);
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
@@ -41,7 +40,6 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
 // like our links to have.)
 //now so it's time to turn
 // things over to the force layout. Here we go.
-    .start();
 
 // Next we'll add the nodes and links to the visualization.
 // Note that we're just sticking them into the SVG container
@@ -58,21 +56,40 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
 // coordinates, the lines won't even be visible, but the
 // markup will be sitting inside the SVG container ready
 // and waiting for the force layout.
-  var link = svg.selectAll('.link')
-    .data(links)
+  
+var link = svg.selectAll('.link')
+    .data(data.links)
     .enter().append('line')
     .attr("class","link");
 
   // Now it's the nodes turn. Each node is drawn as a flag.
-  var node = d3.select('#flags').selectAll('div')
-    .data(force.nodes())
-    .enter().append('div')
+ var  node = d3.select('#nodes').selectAll('div')
+    .data(data.nodes)
+    .enter().append("div")    
+    .style("fill", function(d) { console.log(d.name) 
+      return d.name; })
   //we return the exact flag of each node from the image
-    .attr('class', function (d) { return 'node' })
+    .attr('class', function (d) { return 'node node-' + d.group; })
   //we call some classes to handle the mouse
     .on('mouseover', mouseoverHandler)
     .on("mousemove",mouseMoving)
     .on("mouseout", mouseoutHandler);
+
+  //	filtered types
+  typeFilterList = [];
+
+  //	filter button event handlers
+  $(".filter-btn").on("click", function() {
+  	var id = $(this).attr("value");
+  	if (typeFilterList.includes(id)) {
+  		typeFilterList.splice(typeFilterList.indexOf(id), 1)
+  	} else {
+  		typeFilterList.push(id);
+  	}
+  	filter();
+  	update();
+  });
+
 
   // We're about to tell the force layout to start its
   // calculations. We do, however, want to know when those
@@ -86,8 +103,7 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
     // To move the node, we set the appropriate SVG
     // attributes to their new values.
      node.style('left', function (d) { return d.x + 'px'; })
-         .style('top', function (d) { return d.y + 'px'; })
-         .call(force.drag);
+     .style('top', function (d) { return d.y + 'px'; })
 
     // We also need to update positions of the links.
     // For those elements, the force layout sets the
@@ -112,30 +128,43 @@ var tooltip = d3.select('body').append('div') .attr("class","tooltip");
   }
 
   function mouseMoving (d) {
-      tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","white");
+      tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","#090909");
   }
 
 
-  function handleData(data){
-    let postNodes = [];    
-    let userNodes = [];
-    let links = [];
-   data.forEach(element => {
-     postNodes.push({
-       id:element.Caption,
-       Domain:element.Domain
-     })
-     userNodes.push({
-       id:element.Voter
-    })
-    links.push({
-      source:element.Voter,
-      target:element.Caption
-   })
-   })
-    postNodes = [...new Map(postNodes.map(item => [item["id"], item])).values()]
-   userNodes = [...new Map(userNodes.map(item => [item["id"], item])).values()]
-   Array.prototype.push.apply(postNodes,userNodes);
-   let nodes = postNodes
-   return {nodes, links}
-}  
+//	filter function
+function filter() {
+	//	add and remove nodes from data based on type filters
+	store.nodes.forEach(function(n) {
+		if (!typeFilterList.includes(n.group) && n.filtered) {
+			n.filtered = false;
+			graph.nodes.push($.extend(true, {}, n));
+		} else if (typeFilterList.includes(n.group) && !n.filtered) {
+			n.filtered = true;
+			graph.nodes.forEach(function(d, i) {
+				if (n.id === d.id) {
+					graph.nodes.splice(i, 1);
+				}
+			});
+		}
+	});
+
+	//	add and remove links from data based on availability of nodes
+	store.links1.forEach(function(l) {
+		if (!(typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && l.filtered) {
+			l.filtered = false;
+			graph.links1.push($.extend(true, {}, l));
+		} else if ((typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && !l.filtered) {
+			l.filtered = true;
+			graph.links1.forEach(function(d, i) {
+				if (l.id === d.id) {
+					graph.links1.splice(i, 1);
+				}
+			});
+		}
+	});
+}
+
+function generateLinks(){
+
+}
