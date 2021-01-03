@@ -1,4 +1,7 @@
-let data = localData;
+//let data = localData;
+
+let data= generateLinks(voteData);
+console.log(data)
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var margin  = {top: 10, right: 5, bottom: 10, left: 100},
@@ -16,7 +19,37 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
   // Now we create a force layout object and define its properties.
   // Those include the dimensions of the visualization and the arrays
   // of nodes and links.
-  
+  function draw(data){
+    svg.remove()
+    svg = d3.select("body").append("svg")
+    .attr("width",width)
+    .attr("height",height); 
+    link.remove()
+    link = svg.selectAll('.link')
+    .data(data.links)
+    .enter().append('line')
+    .attr("class","link");
+    node.remove()
+    node=  d3.select('#nodes').selectAll('div')
+    .data(data.nodes)
+    .enter().append("div")    
+    .style("fill", function(d) {
+      return d.name; })
+  //we return the exact flag of each node from the image
+    .attr('class', function (d) { return 'node node-' + d.group; })
+  //we call some classes to handle the mouse
+    .on('mouseover', mouseoverHandler)
+    .on("mousemove",mouseMoving)
+    .on("mouseout", mouseoutHandler);
+    simulation= d3.forceSimulation()
+    .force("charge", d3.forceManyBody().strength(-10))
+    .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
+    .force("x", d3.forceX(width / 2))
+    .force("y", d3.forceY(height / 2))
+    .on("tick", tick);
+  simulation.nodes(data.nodes);
+  simulation.force("link").links(data.links);
+  }
   var simulation = d3.forceSimulation()
   .force("charge", d3.forceManyBody().strength(-10))
   .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
@@ -24,9 +57,6 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
   .force("y", d3.forceY(height / 2))
   .on("tick", tick);
   
-  simulation.nodes(data.nodes);
-  console.log(data.nodes)
-  simulation.force("link").links(data.links);
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
@@ -66,7 +96,7 @@ var link = svg.selectAll('.link')
  var  node = d3.select('#nodes').selectAll('div')
     .data(data.nodes)
     .enter().append("div")    
-    .style("fill", function(d) { console.log(d.name) 
+    .style("fill", function(d) {
       return d.name; })
   //we return the exact flag of each node from the image
     .attr('class', function (d) { return 'node node-' + d.group; })
@@ -81,13 +111,13 @@ var link = svg.selectAll('.link')
   //	filter button event handlers
   $(".filter-btn").on("click", function() {
   	var id = $(this).attr("value");
+    console.log(id)
   	if (typeFilterList.includes(id)) {
   		typeFilterList.splice(typeFilterList.indexOf(id), 1)
   	} else {
   		typeFilterList.push(id);
   	}
   	filter();
-  	update();
   });
 
 
@@ -131,40 +161,63 @@ var link = svg.selectAll('.link')
       tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","#090909");
   }
 
-
-//	filter function
-function filter() {
-	//	add and remove nodes from data based on type filters
-	store.nodes.forEach(function(n) {
-		if (!typeFilterList.includes(n.group) && n.filtered) {
-			n.filtered = false;
-			graph.nodes.push($.extend(true, {}, n));
-		} else if (typeFilterList.includes(n.group) && !n.filtered) {
-			n.filtered = true;
-			graph.nodes.forEach(function(d, i) {
-				if (n.id === d.id) {
-					graph.nodes.splice(i, 1);
-				}
-			});
-		}
-	});
-
-	//	add and remove links from data based on availability of nodes
-	store.links1.forEach(function(l) {
-		if (!(typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && l.filtered) {
-			l.filtered = false;
-			graph.links1.push($.extend(true, {}, l));
-		} else if ((typeFilterList.includes(l.sourceGroup) || typeFilterList.includes(l.targetGroup)) && !l.filtered) {
-			l.filtered = true;
-			graph.links1.forEach(function(d, i) {
-				if (l.id === d.id) {
-					graph.links1.splice(i, 1);
-				}
-			});
-		}
-	});
-}
-
-function generateLinks(){
+function filter(){
+  console.log(typeFilterList)
+  let filteredData = generateLinks(voteData, typeFilterList)
+  
+draw(filteredData)
 
 }
+function generateLinks(data, filter){
+  let nodes = [];    
+  let links = [];
+ data.forEach(element => {
+  let url;
+   try{
+    url = new URL(element.Caption);
+  }
+  catch(e){
+   // console.log(e)
+  }
+   if(filter &&filter.includes("user")){
+    nodes.push({
+      name:element.Caption,
+      group: url
+    })
+  }
+  else { 
+  url = url? filterHostname(url.hostname) :"general"
+  if(!filter || !filter.includes(url)){  
+     nodes.push({
+       name:element.Caption,
+       group: url
+     })
+     nodes.push({
+      name:element.Voter,
+      group:"user"
+    })
+    links.push({
+      source:element.Voter,
+      target:element.Caption,      
+   })
+  }
+  }
+ 
+ })
+  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+ return {nodes, links}
+} 
+function filterHostname(hostname){
+  if (hostname.includes("youtube")) {
+    return "youtube"
+  } else if (hostname.includes("twitter")) {    
+    return "twitter"
+  } else if (hostname.includes("reddit")) {    
+    return "reddit"
+  } else {    
+    return "general"
+  } 
+
+}
+
+draw(data)
