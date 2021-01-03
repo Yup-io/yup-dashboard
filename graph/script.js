@@ -181,27 +181,34 @@ function generateLinks(data, filter){
   }
   url = url? filterHostname(url.hostname) :"general"
    if(filter &&filter.includes("user")){
+      
+    if(!filter || !filter.includes(url)){  
+      nodes.push({
+        name:element.Caption,
+        group: url
+      })
+  
+  }
+}
+  else {
+    
+  if(!filter || !filter.includes(url)){  
     nodes.push({
       name:element.Caption,
       group: url
     })
-  }
-  else { 
-  if(!filter || !filter.includes(url)){  
-     nodes.push({
-       name:element.Caption,
-       group: url
-     })
-     nodes.push({
-      name:element.Voter,
-      group:"user"
-    })
-    links.push({
-      source:element.Voter,
-      target:element.Caption,      
+    nodes.push({
+     name:element.Voter,
+     group:"user"
    })
+   links.push({
+     source:element.Voter,
+     target:element.Caption,      
+  })
+ 
+ }
   }
-  }
+  
  
  })
   nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
