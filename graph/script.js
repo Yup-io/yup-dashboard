@@ -8,23 +8,25 @@ var margin  = {top: 10, right: 5, bottom: 10, left: 100},
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
 var svg = d3.select("body").append("svg")
-  .attr("width",width)
-  .attr("height",height);
+.attr("width",width)
+.attr("height",height);
 //create the tooltip that holds the node name
 var tooltip = d3.select('body').append('div').attr("class","tooltip");
   // Extract the nodes and links from the data.
-  var nodes = data["nodes"];
-  var links = data["links"];
   // Now we create a force layout object and define its properties.
   // Those include the dimensions of the visualization and the arrays
   // of nodes and links.
-  var force = d3.layout.force()
-    .size([width,height])
-    .nodes(d3.values(nodes))
-    .links(links)
-    .on("tick",tick)
-    .charge(-35)
-    .linkDistance(30)
+  
+  var simulation = d3.forceSimulation()
+  .force("charge", d3.forceManyBody().strength(-10))
+  .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
+  .force("x", d3.forceX(width / 2))
+  .force("y", d3.forceY(height / 2))
+  .on("tick", tick);
+  
+  simulation.nodes(data.nodes);
+  console.log(data.nodes)
+  simulation.force("link").links(data.links);
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
@@ -38,7 +40,6 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
 // like our links to have.)
 //now so it's time to turn
 // things over to the force layout. Here we go.
-    .start();
 
 // Next we'll add the nodes and links to the visualization.
 // Note that we're just sticking them into the SVG container
@@ -55,15 +56,18 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
 // coordinates, the lines won't even be visible, but the
 // markup will be sitting inside the SVG container ready
 // and waiting for the force layout.
-  var link = svg.selectAll('.link')
-    .data(links)
+  
+var link = svg.selectAll('.link')
+    .data(data.links)
     .enter().append('line')
     .attr("class","link");
 
   // Now it's the nodes turn. Each node is drawn as a flag.
-  var node = d3.select('#nodes').selectAll('div')
-    .data(force.nodes())
-    .enter().append('div')
+ var  node = d3.select('#nodes').selectAll('div')
+    .data(data.nodes)
+    .enter().append("div")    
+    .style("fill", function(d) { console.log(d.name) 
+      return d.name; })
   //we return the exact flag of each node from the image
     .attr('class', function (d) { return 'node node-' + d.group; })
   //we call some classes to handle the mouse
@@ -99,8 +103,7 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
     // To move the node, we set the appropriate SVG
     // attributes to their new values.
      node.style('left', function (d) { return d.x + 'px'; })
-         .style('top', function (d) { return d.y + 'px'; })
-         .call(force.drag);
+     .style('top', function (d) { return d.y + 'px'; })
 
     // We also need to update positions of the links.
     // For those elements, the force layout sets the
@@ -160,4 +163,8 @@ function filter() {
 			});
 		}
 	});
+}
+
+function generateLinks(){
+
 }
