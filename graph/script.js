@@ -109,7 +109,9 @@ var link = svg.selectAll('.link')
   typeFilterList = [];
 
   //	filter button event handlers
-  $(".filter-btn").on("click", function() {
+  $(".filter-btn").on("click", function(e) {
+    console.log(e)
+    e.target.classList.toggle("active")
   	var id = $(this).attr("value");
     console.log(id)
   	if (typeFilterList.includes(id)) {
