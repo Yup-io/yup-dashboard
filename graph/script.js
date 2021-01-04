@@ -1,62 +1,33 @@
 //let data = localData;
 
-let data= generateLinks(voteData);
+let currentData;
+let data = generateData(voteData);
 console.log(data)
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
-var margin  = {top: 10, right: 5, bottom: 10, left: 100},
-    width   = document.body.clientWidth-margin.left-margin.right,
-    height  = document.body.clientHeight-margin.top-margin.bottom;
+var margin = { top: 10, right: 5, bottom: 10, left: 100 },
+  width = document.body.clientWidth ,
+  height = document.body.clientHeight ;
 //We start off by creating an SVG
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
-var svg = d3.select("body").append("svg")
-.attr("width",width)
-.attr("height",height);
+var svg = d3.select("#container").append("svg")
+  .attr("width", width)
+  .attr("height", height);
 //create the tooltip that holds the node name
-var tooltip = d3.select('body').append('div').attr("class","tooltip");
-  // Extract the nodes and links from the data.
-  // Now we create a force layout object and define its properties.
-  // Those include the dimensions of the visualization and the arrays
-  // of nodes and links.
-  function draw(data){
-    svg.remove()
-    svg = d3.select("body").append("svg")
-    .attr("width",width)
-    .attr("height",height); 
-    link.remove()
-    link = svg.selectAll('.link')
-    .data(data.links)
-    .enter().append('line')
-    .attr("class","link");
-    node.remove()
-    node=  d3.select('#nodes').selectAll('div')
-    .data(data.nodes)
-    .enter().append("div")    
-    .style("fill", function(d) {
-      return d.name; })
-  //we return the exact flag of each node from the image
-    .attr('class', function (d) { return 'node node-' + d.group; })
-  //we call some classes to handle the mouse
-    .on('mouseover', mouseoverHandler)
-    .on("mousemove",mouseMoving)
-    .on("mouseout", mouseoutHandler);
-    simulation= d3.forceSimulation()
-    .force("charge", d3.forceManyBody().strength(-10))
-    .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
-    .force("x", d3.forceX(width / 2))
-    .force("y", d3.forceY(height / 2))
-    .on("tick", tick);
-  simulation.nodes(data.nodes);
-  simulation.force("link").links(data.links);
-  }
-  var simulation = d3.forceSimulation()
+var tooltip = d3.select('body').append('div').attr("class", "tooltip");
+// Extract the nodes and links from the data.
+// Now we create a force layout object and define its properties.
+// Those include the dimensions of the visualization and the arrays
+// of nodes and links.
+
+var simulation = d3.forceSimulation()
   .force("charge", d3.forceManyBody().strength(-10))
-  .force("link", d3.forceLink().id(function(d) { return d.name; }).distance(10))
+  .force("link", d3.forceLink().id(function (d) { return d.name; }).distance(10))
   .force("x", d3.forceX(width / 2))
   .force("y", d3.forceY(height / 2))
   .on("tick", tick);
-  
+
 //    .linkStrength(0.9)
 //    .theta(0.2)
 //    .alpha(0.9)
@@ -86,147 +57,279 @@ var tooltip = d3.select('body').append('div').attr("class","tooltip");
 // coordinates, the lines won't even be visible, but the
 // markup will be sitting inside the SVG container ready
 // and waiting for the force layout.
-  
+
 var link = svg.selectAll('.link')
+  .data(data.links)
+  .enter().append('line')
+  .attr("class", "link");
+
+// Now it's the nodes turn. Each node is drawn as a flag.
+var node = d3.select('#nodes').selectAll('div')
+  .data(data.nodes)
+  .enter().append("div")
+  .style("fill", function (d) {
+    return d.name;
+  })
+  //we return the exact flag of each node from the image
+  .attr('class', function (d) { return 'node node-' + d.group; })
+  //we call some classes to handle the mouse
+  .on('mouseover', mouseoverHandler)
+  .on("mousemove", mouseMoving)
+  .on("mouseout", mouseoutHandler);
+
+//	filtered types
+typeFilterList = [];
+
+//	filter button event handlers
+$(".filter-btn").on("click", function (e) {
+  console.log(e)
+  e.target.classList.toggle("active")
+  var id = $(this).attr("value");
+  console.log(id)
+  if (typeFilterList.includes(id)) {
+    typeFilterList.splice(typeFilterList.indexOf(id), 1)
+  } else {
+    typeFilterList.push(id);
+  }
+  filter();
+});
+
+$(".reset-btn").on("click", function (e) {
+  $(".filter-btn").removeClass("active")
+  draw(data)
+});
+function updateDetailsTab(){
+  $("#node-name").text( currentData.name)
+  $("#node-amount").text(currentData.nodes.length)
+  $("#node-connections").text(currentData.links.length)
+}
+function showNodeList(){  
+  $("#nodeList").show()
+}
+function createTable(data){  
+  console.log(data)
+  let header = [ "name", "group"]
+  let table = document.getElementById("table");
+  table.deleteTHead()
+  data.nodes.forEach(element => {
+    let row = table.insertRow();  
+    for(let key of header ){
+      let cell = row.insertCell();
+      let text = document.createTextNode(element[key]);
+      cell.appendChild(text);
+    }    
+  })  
+  let thead = table.createTHead();
+  let row = thead.insertRow();
+  for (let key of header) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(key.charAt(0).toUpperCase() + key.slice(1));
+    th.appendChild(text);
+    row.appendChild(th);
+  }
+  
+}
+// We're about to tell the force layout to start its
+// calculations. We do, however, want to know when those
+// calculations are complete, so before we kick things off
+// we'll define a function that we want the layout to call
+// once the calculations are done.
+function draw(data) {
+  updateDetailsTab()
+  createTable(data)
+  svg.remove()
+  svg = d3.select("#container").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+  link.remove()
+  link = svg.selectAll('.link')
     .data(data.links)
     .enter().append('line')
-    .attr("class","link");
-
-  // Now it's the nodes turn. Each node is drawn as a flag.
- var  node = d3.select('#nodes').selectAll('div')
+    .attr("class", "link");
+  node.remove()
+  node = d3.select('#nodes').selectAll('div')
     .data(data.nodes)
-    .enter().append("div")    
-    .style("fill", function(d) {
-      return d.name; })
-  //we return the exact flag of each node from the image
-    .attr('class', function (d) { return 'node node-' + d.group; })
-  //we call some classes to handle the mouse
-    .on('mouseover', mouseoverHandler)
-    .on("mousemove",mouseMoving)
-    .on("mouseout", mouseoutHandler);
-
-  //	filtered types
-  typeFilterList = [];
-
-  //	filter button event handlers
-  $(".filter-btn").on("click", function(e) {
-    console.log(e)
-    e.target.classList.toggle("active")
-  	var id = $(this).attr("value");
-    console.log(id)
-  	if (typeFilterList.includes(id)) {
-  		typeFilterList.splice(typeFilterList.indexOf(id), 1)
-  	} else {
-  		typeFilterList.push(id);
-  	}
-  	filter();
-  });
-
-
-  // We're about to tell the force layout to start its
-  // calculations. We do, however, want to know when those
-  // calculations are complete, so before we kick things off
-  // we'll define a function that we want the layout to call
-  // once the calculations are done.
-  function tick(e){
-    // First let's reposition the nodes. As the force
-    // layout runs it updates the `x` and `y` properties
-    // that define where the node should be positioned.
-    // To move the node, we set the appropriate SVG
-    // attributes to their new values.
-     node.style('left', function (d) { return d.x + 'px'; })
-     .style('top', function (d) { return d.y + 'px'; })
-
-    // We also need to update positions of the links.
-    // For those elements, the force layout sets the
-    // `source` and `target` properties, specifying
-    // `x` and `y` values in each case.
-    link.attr('x1', function(d){ return  d.source.x})
-        .attr('y1',function(d){ return  d.source.y})
-        .attr('x2', function(d){ return  d.target.x})
-        .attr('y2',function(d){ return   d.target.y})
-  }
-
-  //hover over a flag
-  //the tooltip with the name of the node is going to show up
-  function mouseoverHandler (d) {
-     tooltip.transition().style('opacity', .9)
-     tooltip.html('<p>' + d["name"] + '</p>' );
-  }
-  //leaving a flag
-  //the tooltip will disappear
-  function mouseoutHandler (d) {
-      tooltip.transition().style('opacity', 0);
-  }
-
-  function mouseMoving (d) {
-      tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px").style("color","#090909");
-  }
-
-function filter(){
-  console.log(typeFilterList)
-  let filteredData = generateLinks(voteData, typeFilterList)
-  console.log(filteredData)
-draw(filteredData)
-
-}
-function generateLinks(data, filter){
-  let nodes = [];    
-  let links = [];
- data.forEach(element => {
-  let url;
-   try{
-    url = new URL(element.Caption);
-  }
-  catch(e){
-   // console.log(e)
-  }
-  url = url? filterHostname(url.hostname) :"general"
-   if(filter &&filter.includes("user")){
-      
-    if(!filter || !filter.includes(url)){  
-      nodes.push({
-        name:element.Caption,
-        group: url
-      })
-  
-  }
-}
-  else {
-    
-  if(!filter || !filter.includes(url)){  
-    nodes.push({
-      name:element.Caption,
-      group: url
+    .enter().append("div")
+    .style("fill", function (d) {
+      return d.name;
     })
-    nodes.push({
-     name:element.Voter,
-     group:"user"
-   })
-   links.push({
-     source:element.Voter,
-     target:element.Caption,      
+    //we return the exact flag of each node from the image
+    .attr('class', function (d) { return 'node node-' + d.group; })
+    //we call some classes to handle the mouse
+    .on('click', clickHandler)
+    .on('mouseover', mouseoverHandler)
+    .on("mousemove", mouseMoving)
+    .on("mouseout", mouseoutHandler);
+  simulation = d3.forceSimulation()
+    .force("charge", d3.forceManyBody().strength(-10))
+    .force("link", d3.forceLink().id(function (d) { return d.name; }).distance(10))
+    .force("x", d3.forceX(width / 2))
+    .force("y", d3.forceY(height / 2))
+    .on("tick", tick);
+  simulation.nodes(data.nodes);
+  simulation.force("link").links(data.links);
+}
+function tick(e) {
+  // First let's reposition the nodes. As the force
+  // layout runs it updates the `x` and `y` properties
+  // that define where the node should be positioned.
+  // To move the node, we set the appropriate SVG
+  // attributes to their new values.
+  node.style('left', function (d) { return d.x + 'px'; })
+    .style('top', function (d) { return d.y + 'px'; })
+
+  // We also need to update positions of the links.
+  // For those elements, the force layout sets the
+  // `source` and `target` properties, specifying
+  // `x` and `y` values in each case.
+  link.attr('x1', function (d) { return d.source.x })
+    .attr('y1', function (d) { return d.source.y })
+    .attr('x2', function (d) { return d.target.x })
+    .attr('y2', function (d) { return d.target.y })
+}
+
+//hover over a flag
+//the tooltip with the name of the node is going to show up
+function mouseoverHandler(d) {
+  tooltip.transition().style('opacity', .9)
+  tooltip.html('<p>' + d["name"] + '</p>');
+}
+//leaving a flag
+//the tooltip will disappear
+function mouseoutHandler(d) {
+  tooltip.transition().style('opacity', 0);
+}
+
+function mouseMoving(d) {
+  tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px").style("color", "#090909");
+}
+function clickHandler(d) {
+  console.log(d)
+  getCorrespondingNodes(d)
+}
+function filter() {
+  console.log(typeFilterList)
+  let filteredData = generateData(voteData, typeFilterList)
+  console.log(filteredData)
+  draw(filteredData)
+
+}
+function generateData(data, filter) {
+  let nodes = [];
+  let links = [];
+  data.forEach(element => {
+    let url;
+    try {
+      url = new URL(element.Caption);
+    }
+    catch (e) {
+      // console.log(e)
+    }
+    url = url ? filterHostname(url.hostname) : "general"
+    if (filter && filter.includes("user")) {
+
+      if (!filter || !filter.includes(url)) {
+        nodes.push({
+          name: element.Caption,
+          group: url
+        })
+
+      }
+    }
+    else {
+
+      if (!filter || !filter.includes(url)) {
+        nodes.push({
+          name: element.Caption,
+          group: url
+        })
+        nodes.push({
+          name: element.Voter,
+          group: "user"
+        })
+        links.push({
+          source: element.Voter,
+          target: element.Caption,
+        })
+
+      }
+    }
+
+
   })
- 
- }
-  }
-  
- 
- })
   nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
- return {nodes, links}
-} 
-function filterHostname(hostname){
+  currentData = {name:filter?.length?filter:"Yup Network", nodes, links}
+  return { nodes, links }
+}
+function filterHostname(hostname) {
   if (hostname.includes("youtube")) {
     return "youtube"
-  } else if (hostname.includes("twitter")) {    
+  } else if (hostname.includes("twitter")) {
     return "twitter"
-  } else if (hostname.includes("reddit")) {    
+  } else if (hostname.includes("reddit")) {
     return "reddit"
-  } else {    
+  } else {
     return "general"
-  } 
+  }
 
 }
+function getCorrespondingNodes(node){
+  if(node.group!="user"){
+    draw(getDomainVotes(voteData,node))
+  }
+  else {    
+    draw(getUserVotes(voteData,node))
+  }
+}
+function getDomainVotes(data, node){
+  let nodes = [];
+  let links = [];
+  nodes.push(node)
+  data.forEach(element => {
+      if (element.Caption == node.name) {
+        nodes.push({
+          name: element.Voter,
+          group: "user"
+        })
+        links.push({
+          source: element.Voter,
+          target: element.Caption,
+        })
+      }
+  })
+  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+  
+  currentData = {name:node.name, nodes, links}
+  return { nodes, links }
+}
 
+function getUserVotes(data, node){
+  let nodes = [];
+  let links = [];
+  nodes.push(node)
+  data.forEach(element => {
+      if (element.Voter == node.name) {
+        let url;
+        try {
+          url = new URL(element.Caption);
+        }
+        catch (e) {
+          // console.log(e)
+        }
+        url = url ? filterHostname(url.hostname) : "general"
+        nodes.push({
+          name: element.Caption,
+          group: url
+        })
+        links.push({
+          source: element.Caption,
+          target: element.Voter,
+        })
+      }
+  })
+  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+  
+  currentData = {name:node.name,nodes, links}
+  return { nodes, links }
+}
 draw(data)
