@@ -2,3 +2,132 @@ h3.category-emoji {
   margin-bottom: 0px;
   margin-right: 2px;
 }
+
+h1,
+h3,
+p {
+  text-align: left;
+}
+
+#container {
+  margin: auto;
+}
+
+.link {
+  stroke: #aaaaaacc;
+  stroke-width: 1px;
+}
+
+#nodes {
+  position: absolute;
+}
+
+.node {
+  width: 3px;
+  height: 3px;
+  position: absolute;
+  background: #0f0f0f 5%;
+  border-radius: 200px;
+  border: 0px solid #0f0f0f55;
+}
+
+.node-user {
+  width: 4px;
+  height: 4px;
+  background: #dadada 5%;
+}
+
+.node-twitter {
+  width: 6px;
+  height: 6px;
+  background: #1da1f2 5%;
+}
+
+.node-youtube {
+  width: 7px;
+  height: 7px;
+  background: #c4302b 5%;
+}
+
+.node-reddit {
+  background: orangered 5%;
+}
+
+.node-general {
+  background: #3a3a3a 5%;
+}
+.header {
+  display: flex;
+}
+button {
+  border: 0;
+  padding: 0;
+  background: unset;
+  margin: 20px;
+}
+#twitter {
+  color: #1da1f2;
+}
+
+#user {
+  color: #dadada;
+}
+
+#youtube {
+  color: #c4302b;
+}
+.active {
+  color: #0f0f0f !important;
+}
+.button-container {
+  display: flex;
+  width: 60%;
+  justify-content: center;
+  align-items: center;
+}
+#nodeInfo {
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+p{
+  margin: 0 10px;
+}
+#node-name{
+  margin: 0;
+}
+a{
+  cursor: pointer;
+}
+
+#nodeList {
+  display: none;
+  width: 80%;
+  height: 80%;
+   margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+}
+/*
+* find the flag-sprite here: https://www.flag-sprites.com/
+* create an image and downlaod the file...
+*
+* You don't have to upload your own image,
+* you can simply right click on the flag-sprites's image
+* and select copy image address.
+*
+* In flags.css (from the file you download) you can copy-paste the .flag.flag-ad section
+*/
+
+.tooltip {
+  background: #dadada;
+  padding: 15px 20px;
+  font-family: Poppins, sans-serif;
+  color: #090909;
+  border-radius: 10px;
+  font-weight: 500;
+}
