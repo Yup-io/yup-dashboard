@@ -6,6 +6,7 @@ import YupGraph from "../../_metronic/_partials/widgets/yup/YupGraph";
 import YupFeedTableWidget from "../../_metronic/_partials/widgets/yup/YupFeedTableWidget";
 import YupActionsWidget from "../../_metronic/_partials/widgets/yup/YupActionsWidget";
 import {Button,Jumbotron} from "react-bootstrap";
+import YupGraphIframe from "../../_metronic/_partials/widgets/yup/YupGraphIframe";
 
 export const YupPage = () => {
   const suhbeader = useSubheader();
@@ -30,7 +31,7 @@ suhbeader.setTitle("📊 Yup Live");
   
   <div className="row">
   <div className="col-lg-12 col-xxl-12">
-  <YupGraph className="card-stretch gutter-b" />
+  <YupGraphIframe className="card-stretch gutter-b"  src={process.env.PUBLIC_URL +"/graph/index.html"} height="500" width="500" />
   </div>
   </div>
   </>);

@@ -5,23 +5,25 @@ import * as d3 from "d3";
 
 class YupGraph extends Component {
   constructor(props) {
-    super(props);
+    super(props);    
+    this.draw = this.draw.bind(this)
     this.containerRef = React.createRef();
     this.nodeRef = React.createRef();
     this.state = {
       error: null,
       isLoaded: false,
-      data: voteData,            
+      data: voteData,    
+      node:null,
+      simulation:null,
+      link:null,
+      tooltip:null,     
+      typeFilterList : [],
+      currentData : null, 
     };
     
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
      
-this.typeFilterList = [];
-this.currentData = null;
-this.margin = { top: 10, right: 5, bottom: 10, left: 100 }
-this.width = document.body.clientWidth;
-this.height = document.body.clientHeight ;
 //We start off by creating an SVG
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
@@ -52,53 +54,68 @@ this.height = document.body.clientHeight ;
 
   }
    draw(data) {
+        
+    var margin = { top: 10, right: 5, bottom: 10, left: 100 }
+    var width = document.body.clientWidth;
+    var height = document.body.clientHeight ;      
     //this.updateDetailsTab()
     //this.createTable(data)
-    this.svg = d3.select(this.containerRef.current).append("svg")
-      .attr("width", this.width)
-      .attr("height", this.height);
-    this.link = this.svg.selectAll('.link')
+    var svg = d3.select(this.containerRef.current).append("svg")
+      .attr("width", width)
+      .attr("height", height);
+      
+    var link = svg.selectAll('.link')
       .data(data.links)
       .enter().append('line')
       .attr("class", "link");
     
-    this.tooltip = d3.select('body').append('div').attr("class", "tooltip");
+      var tooltip = d3.select('body').append('div').attr("class", "tooltip");
     
-      this.node = d3.select(this.nodeRef.current).selectAll('div')
+      var node = d3.select(this.nodeRef.current).selectAll('div')
       .data(data.nodes)
       .enter().append("div")
       .style("fill", function (d) {return d.name;})
       //we return the exact flag of each node from the image
       .attr('class', function (d) { return 'node node-' + d.group; })
       //we call some classes to handle the mouse
-      .on('click', this.clickHandler)
-      .on('mouseover',this.mouseoverHandler)
-      .on("mousemove", (event, d) =>{
-        this.tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px").style("color", "#090909");
+      .on('click', (d)=>{        
+      this.getCorrespondingNodes(d)
       })
-      .on("mouseout", this.mouseoutHandler);
-
-      this.simulation = d3.forceSimulation()
+      .on('mouseover',function (d) {
+        console.log(d.__data__)
+        tooltip.transition().style('opacity', .9)
+        tooltip.html('<p>' + d["name"] + '</p>');
+      })
+      .on("mousemove", (event, d) =>{
+        tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px").style("color", "#090909");
+      })
+      .on("mouseout", ()=>{
+        tooltip.transition().style('opacity', 0);
+      });
+      var simulation = d3.forceSimulation()
       .force("charge", d3.forceManyBody().strength(-10))
       .force("link", d3.forceLink().id(function (d) { return d.name; }).distance(10))
-      .force("x", d3.forceX(this.width / 2))
-      .force("y", d3.forceY(this.height / 2))
-      .on("tick", () => {
-        this.node.style('left', function (d) { return d.x + 'px'; })
+      .force("x", d3.forceX(width / 2))
+      .force("y", d3.forceY(height / 2))
+      .on("tick", (e) => {
+        node.style('left', function (d) {return d.x + 'px'; })
         .style('top', function (d) { return d.y + 'px'; })
     
       // We also need to update positions of the links.
       // For those elements, the force layout sets the
       // `source` and `target` properties, specifying
       // `x` and `y` values in each case.
-      this.link.attr('x1', function (d) { return d.source.x })
+      link.attr('x1', function (d) { return d.source.x })
         .attr('y1', function (d) { return d.source.y })
         .attr('x2', function (d) { return d.target.x })
         .attr('y2', function (d) { return d.target.y })
       });
       
-      this.simulation.nodes(data.nodes);
-      this.simulation.force("link").links(data.links);
+      simulation.nodes(data.nodes);
+      simulation.force("link").links(data.links);
+      //.log({node:node, simulation:simulation, link:link, tooltip:tooltip})
+     //this.setState({node:node, simulation:simulation, link:link, tooltip:tooltip})
+      //console.log(this.state)
   }
    tick(e) {
     // First let's reposition the nodes. As the force
@@ -107,14 +124,14 @@ this.height = document.body.clientHeight ;
     // To move the node, we set the appropriate SVG
     // attributes to their new values.
     console.log(e)
-    this.node.style('left', function (d) { return d.x + 'px'; })
+    this.state.node.style('left', function (d) { return d.x + 'px'; })
       .style('top', function (d) { return d.y + 'px'; })
   
     // We also need to update positions of the links.
     // For those elements, the force layout sets the
     // `source` and `target` properties, specifying
     // `x` and `y` values in each case.
-    this.link.attr('x1', function (d) { return d.source.x })
+    this.state.link.attr('x1', function (d) { return d.source.x })
       .attr('y1', function (d) { return d.source.y })
       .attr('x2', function (d) { return d.target.x })
       .attr('y2', function (d) { return d.target.y })
@@ -123,17 +140,17 @@ this.height = document.body.clientHeight ;
   //hover over a flag
   //the tooltip with the name of the node is going to show up
    mouseoverHandler(d) {
-    this.tooltip.transition().style('opacity', .9)
-    this.tooltip.html('<p>' + d["name"] + '</p>');
+    this.state.tooltip.transition().style('opacity', .9)
+    this.state.tooltip.html('<p>' + d["name"] + '</p>');
   }
   //leaving a flag
   //the tooltip will disappear
    mouseoutHandler(d) {
-    this.tooltip.transition().style('opacity', 0);
+    this.state.tooltip.transition().style('opacity', 0);
   }
   
    mouseMoving(event, d) {
-    this.tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px").style("color", "#090909");
+    this.state.tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px").style("color", "#090909");
   }
    clickHandler(d) {
     console.log(d)

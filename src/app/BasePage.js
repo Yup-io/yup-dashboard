@@ -3,7 +3,6 @@ import {Redirect, Switch, Route} from "react-router-dom";
 import {LayoutSplashScreen, ContentRoute} from "../_metronic/layout";
 import {BuilderPage} from "./pages/BuilderPage";
 import {YupPage} from "./pages/YupPage";
-import {YupGraph} from "./pages/YupGraph";
 
 const GoogleMaterialPage = lazy(() =>
   import("./modules/GoogleMaterialExamples/GoogleMaterialPage")
@@ -24,7 +23,6 @@ export default function BasePage() {
         <Suspense fallback={<LayoutSplashScreen/>}>
             <Switch>
                 <ContentRoute path="/" component={YupPage}/>
-                <ContentRoute path="/graph" component={YupGraph}/>
                {/* 
                 <ContentRoute path="/my-page" component={YupPage}/>
                 <Route path="/google-material" component={GoogleMaterialPage}/>

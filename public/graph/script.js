@@ -7,7 +7,7 @@ console.log(data)
 // We're using a size that's convenient for displaying the graphic on
 var margin = { top: 10, right: 5, bottom: 10, left: 100 },
   width = document.body.clientWidth ,
-  height = document.body.clientHeight ;
+  height = 1000 ;
 //We start off by creating an SVG
 // container to hold the visualization. We only need to specify
 // the dimensions for this container.
