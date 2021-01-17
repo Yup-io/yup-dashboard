@@ -17,13 +17,15 @@ class YupGraphIframe extends Component {
         )).observe(document.body);
       }
       onResize () {  
-          this.setState({height: document.body.scrollHeight}) 
+          this.setState({height: document.body.clientHeight}) 
       
       }
 render(){
     return(         
-        <div>          
-          <iframe src={this.props.src} height={this.state.height} width="100%" frameBorder="0"/>         
+        <div className="card card-custom card-stretch gutter-b">            
+          <div className="card-body pt-0 pb-3">      
+            <iframe src={this.props.src} height={this.state.height} width="100%" frameBorder="0"/>         
+          </div>
         </div>
       )
 }

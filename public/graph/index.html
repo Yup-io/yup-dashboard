@@ -2,7 +2,8 @@
 
 <head>
   <title>Show National Contiguity with a Force Directed Graph - D3.js</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
     rel="stylesheet">
@@ -10,38 +11,85 @@
 </head>
 
 <body>
-  <div class="header">
-    <div class="button-container">
+  <div class="header mb-3">
+    <div>
+      <h4 class="mb-0 mr-3">Yup Graph</h4>
+    </div>
+    <div class=" d-flex form-group d-flex  mx-sm-1 mx-md-2 mb-0">
+      <label for="inputPassword2" class="sr-only">Search User</label>
+      <input type="password" class="form-control mr-2" id="inputPassword2" placeholder="Search User">
+      <button type="button" class="btn btn-light mx-2">Me</button>
+      <button type="button" class="btn btn-light mx-2">All users</button>
+    </div>
+    <div class="d-flex form-group  mb-0 ml-auto">
+      <button type="button" class="btn btn-light mx-1">Last 24h</button>
+      <button type="button" class="btn btn-light mx-1">Last Week</button>
+      <button type="button" class="btn btn-light mx-1">Last Month</button>
+    </div>
+  </div>
+  <div class="content d-flex">
+    <div class="left d-flex flex-column w-25">    
+      <div class="mt-5" id="nodeInfo" style="width: 18rem;">
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+          <p>User:</p> <h6 id="node-name"></h6>
+        </div>
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+        <p>Rates: </p><a class="text-primary" onclick="showNodeList()" id="node-amount"></a>
+      </div>
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+        <p>Connections:</p> <span id="node-connections"></span>
+      </div>
+      </div>
+      
+        <div class="card bg-light px-2 py-0" id="legend" style="width: 18rem;">
+          <div class="card-body py-2">
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle twitter"></div>
+              <h6 class="card-title my-0 mx-2">Twitter</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="twitter">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle youtube"></div>
+              <h6 class="card-title my-0 mx-2">Youtube</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="youtube">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle user"></div>
+              <h6 class="card-title my-0 mx-2">User</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="user">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="line"></div>
+              <h6 class="card-title my-0 mx-2">Connections</h6>
+            </div>
+            </div>
+          </div>
+        </div>  
+       <!--  
       <button type="button" class="filter-btn" id="twitter" value="twitter">Twitter</button>
       <button type="button" class="filter-btn" id="user" value="user">User</button>
       <button type="button" class="filter-btn" id="youtube" value="youtube">YouTube</button>
-      <button type="button" class="reset-btn" id="reset">Reset</button>
-    </div>    
-    
-    <div id="nodeInfo">
-      <h5 id="node-name"></h5>
-      <p>Nodes: <a class="text-primary" onclick="showNodeList()" id="node-amount"></a></p>
-      <p >Links: <span id="node-connections"></span></p>
-</div>
-  </div>
-
-
-
-  <!-- Force directed graph -->
-  <div id='container'>
-    <div id='graph'>
-      <div id='nodes'></div>
+      <button type="button" class="reset-btn" id="reset">Reset</button>-->
+    <div class="right w-75">
+      
+      <!-- Force directed graph -->
+      <div id='container'>
+        <div id='graph'>
+          <div id='nodes'></div>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
-  
-    <div id="nodeList"class="card">
-      <div class="card-body table-responsive">
-        <table id="table" class="table">          
-        </table>
-      </div>
-    </div>  
 
-  
+  <div id="nodeList" class="card">
+    <div class="card-body table-responsive">
+      <table id="table" class="table">
+      </table>
+    </div>
+  </div>
+
+
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src='https://d3js.org/d3.v5.min.js'></script>

@@ -1,7 +1,11 @@
-body {
-  background-color:none;
-  padding: 50px;
+html{
+  height: fit-content;
+}
+ body {
+  width: 100%;
+  padding: 20px 50px 0 50px;
   font-family: Poppins, sans-sans-serif;
+  height: fit-content;
 }
 
 h1,
@@ -59,38 +63,35 @@ p {
 }
 .header {
   display: flex;
+  align-items: center;
 }
-button {
-  border: 0;
-  padding: 0;
-  background: unset;
-  margin: 20px;
-}
-#twitter {
+.twitter {
   color: #1da1f2;
+  background-color: #1da1f2;
 }
 
-#user {
+.user {
   color: #dadada;
+  background-color: #dadada;
 }
 
-#youtube {
+.youtube {
   color: #c4302b;
+  background-color: #c4302b;
 }
 .active {
   color: #0f0f0f !important;
 }
 .button-container {
   display: flex;
-  width: 60%;
   justify-content: center;
   align-items: center;
 }
 #nodeInfo {
-  width: 20%;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center;  
+  flex-direction: column;
 }
 p{
   margin: 0 10px;
@@ -113,6 +114,13 @@ a{
   justify-content: center;
   text-align: center;
 }
+.rectangle {
+  width:15px;
+  height:15px;
+}
+.twitter-color{
+  background-color: #63A1FF; 
+}
 /*
 * find the flag-sprite here: https://www.flag-sprites.com/
 * create an image and downlaod the file...
@@ -132,7 +140,18 @@ a{
   border-radius: 10px;
   font-weight: 500;
 }
-
+.content{
+  height: calc(100vh - 104px);
+}
+.left {
+  display: flex;
+  justify-content: space-between;
+}
+.line{
+  width: 15px;
+  height: 1px;
+  background-color: #B8B8B8;
+}
 /*
  * Footer
  
@@ -154,4 +173,3 @@ a:hover {
 }
 .footerSvg {
   width: 32px;
-}
