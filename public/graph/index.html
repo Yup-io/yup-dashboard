@@ -16,15 +16,19 @@
       <h4 class="mb-0 mr-3">Yup Graph</h4>
     </div>
     <div class=" d-flex form-group d-flex  mx-sm-1 mx-md-2 mb-0">
-      <label for="inputPassword2" class="sr-only">Search User</label>
-      <input type="password" class="form-control mr-2" id="inputPassword2" placeholder="Search User">
-      <button type="button" class="btn btn-light mx-2">Me</button>
-      <button type="button" class="btn btn-light mx-2">All users</button>
+      <form  class="m-0" onsubmit="changeUser()" action="javascript:void(0);">
+      <label for="user" class="sr-only">Search User</label>    
+      <input  class="form-control mr-2" id="user-input" placeholder="Search User">
+      <input type="submit" hidden />
+    </form>
+    <input type="radio" name="buttonGroup2"  id="user" ><label for="user" id="user-show-label" class="btn btn-light mx-2" hidden onclick="savedUser()"></label>
+    <input type="radio" checked="true" name="buttonGroup2"  id="allUsers" ><label for="allUsers" class="btn btn-light mx-2" onclick="allUsers()">All users</label>
     </div>
     <div class="d-flex form-group  mb-0 ml-auto">
-      <button type="button" class="btn btn-light mx-1">Last 24h</button>
-      <button type="button" class="btn btn-light mx-1">Last Week</button>
-      <button type="button" class="btn btn-light mx-1">Last Month</button>
+      <input type="radio" name="buttonGroup" id="day" ><label for="day" class="btn btn-light mx-1" onclick="changeTimeframe('0')">Last 24h</label>
+      <input type="radio" name="buttonGroup"  id="week" ><label for="week" class="btn btn-light mx-1"onclick="changeTimeframe('6')">Last Week</label>
+      <input type="radio" name="buttonGroup" id="month" ><label for="month" class="btn btn-light mx-1"onclick="changeTimeframe('30')">Last Month</label>
+      <input type="radio" checked="true" name="buttonGroup" id="all" ><label for="all" class="btn btn-light mx-1"onclick="changeTimeframe('')">All</label>
     </div>
   </div>
   <div class="content d-flex">
@@ -65,11 +69,6 @@
             </div>
           </div>
         </div>  
-       <!--  
-      <button type="button" class="filter-btn" id="twitter" value="twitter">Twitter</button>
-      <button type="button" class="filter-btn" id="user" value="user">User</button>
-      <button type="button" class="filter-btn" id="youtube" value="youtube">YouTube</button>
-      <button type="button" class="reset-btn" id="reset">Reset</button>-->
     <div class="right w-75">
       
       <!-- Force directed graph -->
@@ -90,7 +89,7 @@
   </div>
 
 
-
+  <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src='https://d3js.org/d3.v5.min.js'></script>
   <script src="data/votes12_28.js"></script>

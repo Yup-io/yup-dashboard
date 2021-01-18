@@ -1,23 +1,17 @@
 //let data = localData;
 
 let currentData;
-let data = generateData(voteData);
-sessionStorage.setItem('', JSON.stringify({timestamp:Date.now(),data:data}))
+let userFilter = '';
+let typeFilterList = [];
+let timeFrameFilter = '';
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
-var margin = {
-  top: 10,
-  right: 5,
-  bottom: 10,
-  left: 100
-}, width,height,svg,tooltip, simulation, link, node;
+var width, height, svg, tooltip, simulation, link, node;
 var cacheDuration = 100000 // 1800000 = 30min cache
-typeFilterList = [];
-
 //	filter button event handlers
+
 $(".filter-btn").on("click", function (e) {
   console.log(e)
-  e.target.classList.toggle("active")
   var id = $(this).attr("value");
   console.log(id)
   if (typeFilterList.includes(id)) {
@@ -26,29 +20,35 @@ $(".filter-btn").on("click", function (e) {
     typeFilterList.push(id);
   }
   typeFilterList.sort()
-  //Check if in cache
-  let cacheName = typeFilterList.toString()
-  let cache = JSON.parse(sessionStorage.getItem(cacheName))
-  if(cache&& Date.now() - cache.timestamp<cacheDuration){
-    console.log("Was cached")
-    currentData = {
-      name: typeFilterList?.length ? typeFilterList : "Yup Network",
-      nodes:cache.data.nodes,
-      links:cache.data.links
-    }
-    draw(cache.data)
-  }
-  else {
-    console.log("Need to cache")
-    filter();
-  }
+  filter()
 });
 
-$(".reset-btn").on("click", function (e) {
-  $(".filter-btn").removeClass("active")
-  draw(data)
-});
+function changeUser() {
+  let userLabel = document.getElementById('user-show-label')
+  userFilter = document.getElementById('user-input').value
+  if (userFilter) {
+    userLabel.innerText = userFilter
+    userLabel.hidden = false
+    document.getElementById('user').checked = true
+    document.getElementById('user').value = userFilter
+  }
+  filter()
+}
 
+function savedUser() {
+  userFilter = document.getElementById('user').value
+  filter()
+}
+
+function allUsers() {
+  userFilter = ''
+  document.getElementById('user').checked = false
+  filter()
+}
+function changeTimeframe(value){
+timeFrameFilter=value
+filter()
+}
 function updateDetailsTab() {
   $("#node-name").text(currentData.name)
   $("#node-amount").text(currentData.nodes.length)
@@ -60,7 +60,6 @@ function showNodeList() {
 }
 
 function createTable(data) {
-  console.log(data)
   let header = ["name", "group"]
   let table = document.getElementById("table");
   table.deleteTHead()
@@ -80,7 +79,6 @@ function createTable(data) {
     th.appendChild(text);
     row.appendChild(th);
   }
-
 }
 // We're about to tell the force layout to start its
 // calculations. We do, however, want to know when those
@@ -88,16 +86,15 @@ function createTable(data) {
 // we'll define a function that we want the layout to call
 // once the calculations are done.
 function draw(data) {
-  
- width = document.body.clientWidth - 100 - document.getElementsByClassName('left')[0].clientWidth
- height = document.getElementsByClassName('content')[0].clientHeight;
+  width = document.body.clientWidth - 100 - document.getElementsByClassName('left')[0].clientWidth
+  height = document.getElementsByClassName('content')[0].clientHeight;
   updateDetailsTab()
   createTable(data)
   svg?.remove()
   svg = d3.select("#container").append("svg")
     .attr("width", width)
     .attr("height", height);
-    tooltip = d3.select('body').append('div').attr("class", "tooltip");
+  tooltip = d3.select('body').append('div').attr("class", "tooltip");
   link?.remove()
   link = svg.selectAll('.link')
     .data(data.links)
@@ -185,18 +182,37 @@ function clickHandler(d) {
 }
 
 function filter() {
+  let cacheName = typeFilterList?.toString() + userFilter + timeFrameFilter
+  console.log(userFilter)
+  let cache = JSON.parse(sessionStorage.getItem(cacheName))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
+    console.log("Was cached")
+    currentData = {
+      name: typeFilterList?.length ? typeFilterList : "Yup Network",
+      nodes: cache.data.nodes,
+      links: cache.data.links
+    }
+    draw(cache.data)
+  } else {
+    console.log("Need to cache")
+    let filteredData = generateData(voteData, typeFilterList, userFilter, timeFrameFilter)
+    let data = JSON.stringify({
+      timestamp: Date.now(),
+      data: filteredData
+    })
+    console.log(cacheName)
+    sessionStorage.setItem(cacheName, data)
+    draw(filteredData)
+  }
   console.log(typeFilterList)
-  let filteredData = generateData(voteData, typeFilterList)    
-  let data = JSON.stringify({timestamp: Date.now(),data: filteredData})
-  sessionStorage.setItem(typeFilterList.toString(),data)
-  draw(filteredData)
 
 }
 
-function generateData(data, filter) {
+function generateData(data, filter, userFilter, timeFrameFilter) {
   let nodes = [];
   let links = [];
   data.forEach(element => {
+    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(element.Time)) <=timeFrameFilter){     
     let url;
     try {
       url = new URL(element.Caption);
@@ -205,33 +221,32 @@ function generateData(data, filter) {
     }
     url = url ? filterHostname(url.hostname) : "general"
     if (filter && filter.includes("user")) {
-
-      if (!filter || !filter.includes(url)) {
+      if (!filter.includes(url)) {
         nodes.push({
           name: element.Caption,
           group: url
         })
-
       }
     } else {
-
-      if (!filter || !filter.includes(url)) {
-        nodes.push({
-          name: element.Caption,
-          group: url
-        })
-        nodes.push({
-          name: element.Voter,
-          group: "user"
-        })
-        links.push({
-          source: element.Voter,
-          target: element.Caption,
-        })
+      if (!filter?.includes(url)) {
+        if (!userFilter || userFilter == element.Voter) {
+          nodes.push({
+            name: element.Caption,
+            group: url
+          })
+          nodes.push({
+            name: element.Voter,
+            group: "user"
+          })
+          links.push({
+            source: element.Voter,
+            target: element.Caption,
+          })
+        }
 
       }
-    }
-
+    } 
+  }
 
   })
   nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
@@ -331,4 +346,4 @@ function getUserVotes(data, node) {
     links
   }
 }
-draw(data)
+filter()

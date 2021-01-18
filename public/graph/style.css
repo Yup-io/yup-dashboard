@@ -114,6 +114,9 @@ a{
   justify-content: center;
   text-align: center;
 }
+.hidden{
+  display: none;
+}
 .rectangle {
   width:15px;
   height:15px;
@@ -121,6 +124,13 @@ a{
 .twitter-color{
   background-color: #63A1FF; 
 }
+label {
+  margin-bottom:0;
+}
+input[type='radio'][name='buttonGroup'] { display:none; }
+input[type='radio'][name='buttonGroup2'] { display:none; }
+input[type='radio'][name='buttonGroup']:checked + label { background-color:#007bffed; color: #fff;}
+input[type='radio'][name='buttonGroup2']:checked + label { background-color:#007bffed; color: #fff;}
 /*
 * find the flag-sprite here: https://www.flag-sprites.com/
 * create an image and downlaod the file...
