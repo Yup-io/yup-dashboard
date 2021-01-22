@@ -17,7 +17,7 @@
     </div>
     <div class=" d-flex form-group d-flex  mx-sm-1 mx-md-2 mb-0">
       <form  class="m-0" onsubmit="changeUser()" action="javascript:void(0);">
-      <label for="user" class="sr-only">Search User</label>    
+      <label for="user" class="sr-only">Search User</label>
       <input  class="form-control mr-2" id="user-input" placeholder="Search User">
       <input type="submit" hidden />
     </form>
@@ -32,19 +32,19 @@
     </div>
   </div>
   <div class="content d-flex">
-    <div class="left d-flex flex-column w-25">    
+    <div class="left d-flex flex-column w-25">
       <div class="mt-5" id="nodeInfo" style="width: 18rem;">
         <div class="row align-items-center text-center my-2 justify-content-between w-100">
           <p>User:</p> <h6 id="node-name"></h6>
         </div>
         <div class="row align-items-center text-center my-2 justify-content-between w-100">
-        <p>Rates: </p><a class="text-primary" onclick="showNodeList()" id="node-amount"></a>
+        <p>Media: </p><a class="text-primary" onclick="showNodeList()" id="node-amount"></a>
       </div>
         <div class="row align-items-center text-center my-2 justify-content-between w-100">
-        <p>Connections:</p> <span id="node-connections"></span>
+        <p>Ratings:</p> <span id="node-connections"></span>
       </div>
       </div>
-      
+
         <div class="card bg-light px-2 py-0" id="legend" style="width: 18rem;">
           <div class="card-body py-2">
             <div class="row align-items-center text-center my-2">
@@ -55,7 +55,7 @@
             <div class="row align-items-center text-center my-2">
               <div class="rectangle youtube"></div>
               <h6 class="card-title my-0 mx-2">Youtube</h6>
-              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="youtube">
+              <input class="ml-auto filter-btn youtube" type="checkbox" checked="checked" name="radio" value="youtube">
             </div>
             <div class="row align-items-center text-center my-2">
               <div class="rectangle user"></div>
@@ -64,13 +64,13 @@
             </div>
             <div class="row align-items-center text-center my-2">
               <div class="line"></div>
-              <h6 class="card-title my-0 mx-2">Connections</h6>
+              <h6 class="card-title my-0 mx-2">Ratings</h6>
             </div>
             </div>
           </div>
-        </div>  
+        </div>
     <div class="right w-75">
-      
+
       <!-- Force directed graph -->
       <div id='container'>
         <div id='graph'>
