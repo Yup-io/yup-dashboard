@@ -78,6 +78,7 @@ p {
 .youtube {
   color: #c4302b;
   background-color: #c4302b;
+  background: #c4302b;
 }
 .active {
   color: #0f0f0f !important;
@@ -90,7 +91,7 @@ p {
 #nodeInfo {
   display: flex;
   justify-content: center;
-  align-items: center;  
+  align-items: center;
   flex-direction: column;
 }
 p{
@@ -110,7 +111,7 @@ a{
    margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   text-align: center;
 }
@@ -122,7 +123,7 @@ a{
   height:15px;
 }
 .twitter-color{
-  background-color: #63A1FF; 
+  background-color: #63A1FF;
 }
 label {
   margin-bottom:0;
@@ -164,7 +165,7 @@ input[type='radio'][name='buttonGroup2']:checked + label { background-color:#007
 }
 /*
  * Footer
- 
+
 a:link {
   color: orangered;
   text-decoration: none;
