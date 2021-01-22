@@ -1,15 +1,14 @@
 //let data = localData;
-
 let currentData;
+let voteData;
 let userFilter = '';
 let typeFilterList = [];
 let timeFrameFilter = '';
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var width, height, svg, tooltip, simulation, link, node;
-var cacheDuration = 100000 // 1800000 = 30min cache
+var cacheDuration = 0 // 1800000 = 30min cache
 //	filter button event handlers
-
 $(".filter-btn").on("click", function (e) {
   console.log(e)
   var id = $(this).attr("value");
@@ -22,7 +21,31 @@ $(".filter-btn").on("click", function (e) {
   typeFilterList.sort()
   filter()
 });
+async function getData(){
+  let cache = JSON.parse(sessionStorage.getItem('initial-data'))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
+    voteData = cache.data
+    filter()
+  }
+  else {
+    axios({
+      method: 'get',
+      url: 'http://api.yup.io/votes?start=328500&limit=900',
+    })
+      .then(function (response) {
+        console.log(response)
+        voteData = response.data        
+        let data = JSON.stringify({
+          timestamp: Date.now(),
+          data: voteData
+        })
+        console.log(data.length)
+        sessionStorage.setItem('initial-data',data)
+        filter()
+      });
 
+  }
+}
 function changeUser() {
   let userLabel = document.getElementById('user-show-label')
   userFilter = document.getElementById('user-input').value
@@ -212,10 +235,11 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
   let nodes = [];
   let links = [];
   data.forEach(element => {
-    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(element.Time)) <=timeFrameFilter){     
+    if(nodes.length<=1000){
+    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(parseInt(element.timestamp))) <=timeFrameFilter){     
     let url;
     try {
-      url = new URL(element.Caption);
+      url = new URL(element.postData[0]?.caption);
     } catch (e) {
       // console.log(e)
     }
@@ -223,32 +247,36 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
     if (filter && filter.includes("user")) {
       if (!filter.includes(url)) {
         nodes.push({
-          name: element.Caption,
+          name: element.postData[0]?.caption,
           group: url
         })
       }
     } else {
       if (!filter?.includes(url)) {
-        if (!userFilter || userFilter == element.Voter) {
-          nodes.push({
-            name: element.Caption,
-            group: url
-          })
-          nodes.push({
-            name: element.Voter,
-            group: "user"
-          })
-          links.push({
-            source: element.Voter,
-            target: element.Caption,
-          })
+        if (!userFilter || userFilter == element.voter) {
+          if(element.postData[0]?.caption){
+            nodes.push({
+              name: element.postData[0]?.caption,
+              group: url
+            })
+            nodes.push({
+              name: element.voter,
+              group: "user"
+            })
+            links.push({
+              source: element.voter,
+              target: element.postData[0]?.caption,
+            })
+
+          }
         }
 
       }
     } 
   }
-
+}
   })
+  console.log(nodes)
   nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
   currentData = {
     name: filter?.length ? filter : "Yup Network",
@@ -287,14 +315,14 @@ function getDomainVotes(data, node) {
   let links = [];
   nodes.push(node)
   data.forEach(element => {
-    if (element.Caption == node.name) {
+    if (element.postData[0].caption == node.name) {
       nodes.push({
-        name: element.Voter,
+        name: element.voter,
         group: "user"
       })
       links.push({
-        source: element.Voter,
-        target: element.Caption,
+        source: element.voter,
+        target: element.postData[0].caption,
       })
     }
   })
@@ -316,21 +344,21 @@ function getUserVotes(data, node) {
   let links = [];
   nodes.push(node)
   data.forEach(element => {
-    if (element.Voter == node.name) {
+    if (element.voter == node.name) {
       let url;
       try {
-        url = new URL(element.Caption);
+        url = new URL(element.postData[0].caption);
       } catch (e) {
         // console.log(e)
       }
       url = url ? filterHostname(url.hostname) : "general"
       nodes.push({
-        name: element.Caption,
+        name: element.postData[0].caption,
         group: url
       })
       links.push({
-        source: element.Caption,
-        target: element.Voter,
+        source: element.postData[0].caption,
+        target: element.voter,
       })
     }
   })
@@ -346,4 +374,5 @@ function getUserVotes(data, node) {
     links
   }
 }
-filter()
+
+getData()

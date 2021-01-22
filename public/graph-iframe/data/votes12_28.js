@@ -1,4 +1,4 @@
-var voteData = 
+var voteData2 = 
   [    
     {
       "id": 6937,
