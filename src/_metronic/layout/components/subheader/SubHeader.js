@@ -76,6 +76,7 @@ export function SubHeader() {
           </div>
 
           <div className="d-flex align-items-center">
+            <Button className="mx-3" variant="primary" href="/graph" target="_self">Graph</Button>
             <Button variant="primary" href="https://app.uniswap.org/#/swap?inputCurrency=0x69bbc3f8787d573f1bbdd0a5f40c7ba0aee9bcc9&outputCurrency=ETH" target="_blank">Buy YUP</Button>
           </div>
 

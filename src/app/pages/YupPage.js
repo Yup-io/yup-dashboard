@@ -29,10 +29,5 @@ suhbeader.setTitle("📊 Yup Live");
   </div>  
   </div>
   
-  <div className="row mb-5">
-  <div className="col-lg-12 col-xxl-12">
-  <YupGraphIframe src={process.env.PUBLIC_URL +"/graph/index.html"}/>
-  </div>
-  </div>
   </>);
 };

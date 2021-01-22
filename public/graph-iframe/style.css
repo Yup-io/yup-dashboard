@@ -6,6 +6,7 @@ html{
   padding: 20px 50px 0 50px;
   font-family: Poppins, sans-sans-serif;
   height: fit-content;
+  overflow: hidden;
 }
 
 h1,
@@ -152,6 +153,7 @@ input[type='radio'][name='buttonGroup2']:checked + label { background-color:#007
 }
 .content{
   height: calc(100vh - 104px);
+  max-height: 900px;
 }
 .left {
   display: flex;
