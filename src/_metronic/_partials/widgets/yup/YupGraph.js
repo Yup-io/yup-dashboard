@@ -207,7 +207,7 @@ class YupGraph extends Component {
   
     })
     nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
-    this.currentData = {name:filter?.length?filter:"Yup Network", nodes, links}
+    this.currentData = {name:filter?.length?filter:"All Recent", nodes, links}
     return { nodes, links }
   }
    filterHostname(hostname) {

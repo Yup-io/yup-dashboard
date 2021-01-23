@@ -109,7 +109,7 @@ a{
    margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   text-align: center;
 }
@@ -135,7 +135,7 @@ a{
 
 /*
  * Footer
- 
+
 a:link {
   color: orangered;
   text-decoration: none;

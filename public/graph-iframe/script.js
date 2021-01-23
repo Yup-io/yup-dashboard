@@ -43,7 +43,7 @@ async function getData(){
   else {
     axios({
       method: 'get',
-      url: 'http://api.yup.io/votes?start=328500&limit=500',
+      url: 'http://api.yup.io/votes?start=328000&limit=1000',
     })
       .then(function (response) {
         console.log(response)
@@ -53,11 +53,11 @@ async function getData(){
             data.push({
               caption: element.postData[0].caption,
               voter:element.voter,
-              timestamp: element.timestamp              
+              timestamp: element.timestamp
             })
           }
         })
-        voteData = data        
+        voteData = data
         let cacheData = JSON.stringify({
           timestamp: Date.now(),
           data: data
@@ -239,7 +239,7 @@ function filter() {
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
     console.log("Was cached")
     currentData = {
-      id: typeFilterList?.length ? typeFilterList : "Yup Network",
+      id: typeFilterList?.length ? typeFilterList : "All Recent",
       nodes: cache.data.nodes,
       links: cache.data.links
     }
@@ -278,14 +278,14 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
   let links = [];
   data.forEach(element => {
     if(nodes.length<=2000){
-    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(parseInt(element.timestamp))) <=timeFrameFilter){     
+    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(parseInt(element.timestamp))) <=timeFrameFilter){
     let url;
     try {
       url = new URL(element.caption);
     } catch (e) {
       // console.log(e)
     }
-    
+
     url = url ? filterHostname(url.hostname) : {group:'general',color:"#3a3a3a"}
     if (filter && filter.includes("user")) {
       if (!filter.includes(url.group)) {
@@ -318,14 +318,14 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
         }
 
       }
-    } 
+    }
   }
 }
   })
   console.log(nodes)
   nodes = [...new Map(nodes.map(item => [item["id"], item])).values()]
   currentData = {
-    id: filter?.length ? filter : "Yup Network",
+    id: filter?.length ? filter : "All Recent",
     nodes,
     links
   }
