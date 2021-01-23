@@ -49,9 +49,9 @@ async function getData(){
         console.log(response)
         var data = []
         response.data.forEach(element => {
-          if(element.postData[0]?.caption){
+          if(element.postData.caption){
             data.push({
-              caption: element.postData[0].caption,
+              caption: element.postData.caption,
               voter:element.voter,
               timestamp: element.timestamp
             })
@@ -66,7 +66,6 @@ async function getData(){
         sessionStorage.setItem('initial-data',cacheData)
         filter()
       });
-
   }
 }
 function changeUser() {
