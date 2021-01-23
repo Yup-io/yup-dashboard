@@ -7,7 +7,20 @@ let timeFrameFilter = '';
 // Define the dimensions of the visualization.
 // We're using a size that's convenient for displaying the graphic on
 var width, height, svg, tooltip, simulation, link, node;
-var cacheDuration = 0 // 1800000 = 30min cache
+var cacheDuration = 1800000 // 1800000 = 30min cache
+var threeDimensional = true;
+const myForceGraph = ForceGraph3D()(document.getElementById('3d-graph'))
+.backgroundColor('white')
+.linkColor(() => '#0f0f0f') //Not working?
+.nodeOpacity(1)
+.height(document.getElementsByClassName('right')[0].offsetHeight)
+.width(document.getElementsByClassName('right')[0].offsetWidth)
+    .nodeLabel('id')
+    .nodeColor(d => d.color).onNodeClick((node) => {
+       getCorrespondingNodes(node)
+    })
+
+
 //	filter button event handlers
 $(".filter-btn").on("click", function (e) {
   console.log(e)
@@ -30,17 +43,27 @@ async function getData(){
   else {
     axios({
       method: 'get',
-      url: 'http://api.yup.io/votes?start=328500&limit=900',
+      url: 'http://api.yup.io/votes?start=328500&limit=500',
     })
       .then(function (response) {
         console.log(response)
-        voteData = response.data        
-        let data = JSON.stringify({
-          timestamp: Date.now(),
-          data: voteData
+        var data = []
+        response.data.forEach(element => {
+          if(element.postData[0]?.caption){
+            data.push({
+              caption: element.postData[0].caption,
+              voter:element.voter,
+              timestamp: element.timestamp              
+            })
+          }
         })
-        console.log(data.length)
-        sessionStorage.setItem('initial-data',data)
+        voteData = data        
+        let cacheData = JSON.stringify({
+          timestamp: Date.now(),
+          data: data
+        })
+        console.log(data)
+        sessionStorage.setItem('initial-data',cacheData)
         filter()
       });
 
@@ -72,8 +95,12 @@ function changeTimeframe(value){
 timeFrameFilter=value
 filter()
 }
+function change3D(){
+threeDimensional=!threeDimensional
+filter()
+}
 function updateDetailsTab() {
-  $("#node-name").text(currentData.name)
+  $("#node-name").text(currentData.id)
   $("#node-amount").text(currentData.nodes.length)
   $("#node-connections").text(currentData.links.length)
 }
@@ -128,7 +155,7 @@ function draw(data) {
     .data(data.nodes)
     .enter().append("div")
     .style("fill", function (d) {
-      return d.name;
+      return d.id;
     })
     //we return the exact flag of each node from the image
     .attr('class', function (d) {
@@ -142,7 +169,7 @@ function draw(data) {
   simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody().strength(-10))
     .force("link", d3.forceLink().id(function (d) {
-      return d.name;
+      return d.id;
     }).distance(10))
     .force("x", d3.forceX(width / 2))
     .force("y", d3.forceY(height / 2))
@@ -187,7 +214,7 @@ function tick(e) {
 function mouseoverHandler(d) {
   console.log(d)
   tooltip.transition().style('opacity', .9)
-  tooltip.html('<p>' + d["name"] + '</p>');
+  tooltip.html('<p>' + d["id"] + '</p>');
 }
 //leaving a flag
 //the tooltip will disappear
@@ -205,17 +232,27 @@ function clickHandler(d) {
 }
 
 function filter() {
+  document.getElementById('spinner').hidden=true
   let cacheName = typeFilterList?.toString() + userFilter + timeFrameFilter
   console.log(userFilter)
   let cache = JSON.parse(sessionStorage.getItem(cacheName))
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
     console.log("Was cached")
     currentData = {
-      name: typeFilterList?.length ? typeFilterList : "Yup Network",
+      id: typeFilterList?.length ? typeFilterList : "Yup Network",
       nodes: cache.data.nodes,
       links: cache.data.links
     }
-    draw(cache.data)
+    if(threeDimensional){
+      document.getElementById('container').hidden=true
+      document.getElementById('3d-graph').hidden=false
+      draw3D(cache.data)
+    }
+    else {
+      document.getElementById('3d-graph').hidden=true
+      document.getElementById('container').hidden=false
+      draw(cache.data)
+    }
   } else {
     console.log("Need to cache")
     let filteredData = generateData(voteData, typeFilterList, userFilter, timeFrameFilter)
@@ -225,7 +262,12 @@ function filter() {
     })
     console.log(cacheName)
     sessionStorage.setItem(cacheName, data)
-    draw(filteredData)
+    if(threeDimensional){
+      draw3D(filteredData)
+    }
+    else {
+      draw(filteredData)
+    }
   }
   console.log(typeFilterList)
 
@@ -235,37 +277,41 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
   let nodes = [];
   let links = [];
   data.forEach(element => {
-    if(nodes.length<=1000){
+    if(nodes.length<=2000){
     if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(parseInt(element.timestamp))) <=timeFrameFilter){     
     let url;
     try {
-      url = new URL(element.postData[0]?.caption);
+      url = new URL(element.caption);
     } catch (e) {
       // console.log(e)
     }
-    url = url ? filterHostname(url.hostname) : "general"
+    
+    url = url ? filterHostname(url.hostname) : {group:'general',color:"#3a3a3a"}
     if (filter && filter.includes("user")) {
-      if (!filter.includes(url)) {
+      if (!filter.includes(url.group)) {
         nodes.push({
-          name: element.postData[0]?.caption,
-          group: url
+          id: element.caption,
+          group: url.group,
+          color: url.color
         })
       }
     } else {
-      if (!filter?.includes(url)) {
+      if (!filter?.includes(url.group)) {
         if (!userFilter || userFilter == element.voter) {
-          if(element.postData[0]?.caption){
+          if(element.caption){
             nodes.push({
-              name: element.postData[0]?.caption,
-              group: url
+              id: element.caption,
+              group: url.group,
+              color: url.color
             })
             nodes.push({
-              name: element.voter,
-              group: "user"
+              id: element.voter,
+              group: "user",
+              color: "#dadada"
             })
             links.push({
               source: element.voter,
-              target: element.postData[0]?.caption,
+              target: element.caption,
             })
 
           }
@@ -277,9 +323,9 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
 }
   })
   console.log(nodes)
-  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+  nodes = [...new Map(nodes.map(item => [item["id"], item])).values()]
   currentData = {
-    name: filter?.length ? filter : "Yup Network",
+    id: filter?.length ? filter : "Yup Network",
     nodes,
     links
   }
@@ -291,22 +337,31 @@ function generateData(data, filter, userFilter, timeFrameFilter) {
 
 function filterHostname(hostname) {
   if (hostname.includes("youtube")) {
-    return "youtube"
+      return {group:'youtube',color:"#c4302b"}
   } else if (hostname.includes("twitter")) {
-    return "twitter"
+      return {group:'twitter',color:"#1da1f2"}
   } else if (hostname.includes("reddit")) {
-    return "reddit"
+      return {group:'reddit',color:"orangered"}
   } else {
-    return "general"
+      return {group:'general',color:"#3a3a3a"}
   }
 
 }
 
 function getCorrespondingNodes(node) {
   if (node.group != "user") {
-    draw(getDomainVotes(voteData, node))
+    if(threeDimensional){
+      draw3D(getDomainVotes(voteData, node))
+    }
+    else {
+      draw(getDomainVotes(voteData, node))
+    }
   } else {
-    draw(getUserVotes(voteData, node))
+    if(threeDimensional){
+      draw3D(getUserVotes(voteData, node))}
+    else {
+      draw(getUserVotes(voteData, node))
+    }
   }
 }
 
@@ -315,21 +370,22 @@ function getDomainVotes(data, node) {
   let links = [];
   nodes.push(node)
   data.forEach(element => {
-    if (element.postData[0].caption == node.name) {
+    if (element.caption == node.id) {
       nodes.push({
-        name: element.voter,
-        group: "user"
+        id: element.voter,
+        group: "user",
+        color: "#dadada"
       })
       links.push({
         source: element.voter,
-        target: element.postData[0].caption,
+        target: element.caption,
       })
     }
   })
-  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+  nodes = [...new Map(nodes.map(item => [item["id"], item])).values()]
 
   currentData = {
-    name: node.name,
+    id: node.id,
     nodes,
     links
   }
@@ -344,28 +400,29 @@ function getUserVotes(data, node) {
   let links = [];
   nodes.push(node)
   data.forEach(element => {
-    if (element.voter == node.name) {
+    if (element.voter == node.id) {
       let url;
       try {
-        url = new URL(element.postData[0].caption);
+        url = new URL(element.caption);
       } catch (e) {
         // console.log(e)
       }
-      url = url ? filterHostname(url.hostname) : "general"
+      url = url ? filterHostname(url.hostname) : {group:'general',color:"#3a3a3a"}
       nodes.push({
-        name: element.postData[0].caption,
-        group: url
+        id: element.caption,
+        group: url.group,
+        color: url.color
       })
       links.push({
-        source: element.postData[0].caption,
+        source: element.caption,
         target: element.voter,
       })
     }
   })
-  nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
+  nodes = [...new Map(nodes.map(item => [item["id"], item])).values()]
 
   currentData = {
-    name: node.name,
+    id: node.id,
     nodes,
     links
   }
@@ -375,4 +432,8 @@ function getUserVotes(data, node) {
   }
 }
 
+function draw3D(data) {
+  updateDetailsTab()
+  myForceGraph.graphData(data);
+}
 getData()

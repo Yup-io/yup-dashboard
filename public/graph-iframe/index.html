@@ -29,6 +29,7 @@
       <input type="radio" name="buttonGroup"  id="week" ><label for="week" class="btn btn-light mx-1"onclick="changeTimeframe('6')">Last Week</label>
       <input type="radio" name="buttonGroup" id="month" ><label for="month" class="btn btn-light mx-1"onclick="changeTimeframe('30')">Last Month</label>
       <input type="radio" checked="true" name="buttonGroup" id="all" ><label for="all" class="btn btn-light mx-1"onclick="changeTimeframe('')">All</label>
+      <input type="checkbox" checked="false" name="buttonGroup3" id="3d" ><label for="3d" class="btn btn-light mx-1"onclick="change3D('')">3D</label>
     </div>
   </div>
   <div class="content d-flex">
@@ -71,6 +72,15 @@
         </div>  
     <div class="right w-75">
       
+<div class="spinner-box" id="spinner">
+  <div class="configure-border-1">  
+    <div class="configure-core"></div>
+  </div>  
+  <div class="configure-border-2">
+    <div class="configure-core"></div>
+  </div> 
+</div>
+<div id="3d-graph"></div>
       <!-- Force directed graph -->
       <div id='container'>
         <div id='graph'>
@@ -87,9 +97,11 @@
       </table>
     </div>
   </div>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>
+  <script src="https://unpkg.com/3d-force-graph"></script>
+  <script src="https://unpkg.com/neo4j-driver"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src='https://d3js.org/d3.v5.min.js'></script>
   <script src="data/votes12_28.js"></script>

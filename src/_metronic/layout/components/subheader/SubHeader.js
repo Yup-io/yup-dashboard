@@ -60,13 +60,14 @@ export function SubHeader() {
             )}
 
             <div className="d-flex align-items-center mr-5">
+              <a href="/" target="_self">
               <h3 className="text-dark font-weight-bold my-2 mr-5">
                 <>
                   {subheader.title}
                 </>
                 {/*<small></small>*/}
               </h3>
-
+              </a>
               <p className="text-dark-25 my-2 mr-5">
                 Yup Protocol Explorer
               </p>
