@@ -178,6 +178,10 @@ input[type='checkbox'][name='buttonGroup3']:checked + label { background-color:#
   height: 1px;
   background-color: #B8B8B8;
 }
+#error{
+  position: absolute;
+    z-index: 2;
+}
 /*
  * Footer
 

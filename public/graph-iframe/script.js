@@ -11,20 +11,22 @@ var width, height, svg, tooltip, simulation, link, node;
 var cacheDuration = 1800000 // 1800000 = 30min cache
 var threeDimensional = true;
 const myForceGraph = ForceGraph3D()(document.getElementById('3d-graph'))
-.backgroundColor('white')
-.linkColor(() => '#0f0f0f') //Not working?
-.nodeOpacity(1)
-.height(document.getElementsByClassName('right')[0].offsetHeight)
-.width(document.getElementsByClassName('right')[0].offsetWidth)
-    .nodeLabel('id')
-    .nodeColor(d => d.color).onNodeClick((node) => {
-       getCorrespondingNodes(node)
-    })
+  .backgroundColor('white')
+  .linkColor(() => '#0f0f0f') //Not working?
+  .nodeOpacity(1)
+  .height(document.getElementsByClassName('right')[0].offsetHeight)
+  .width(document.getElementsByClassName('right')[0].offsetWidth)
+  .nodeLabel('id')
+  .nodeColor(d => d.color).onNodeClick((node) => {
+    getCorrespondingNodes(node)
+  })
 
 
+$(document).on('click', function () {
+  document.getElementById('error').hidden=true;  
+});
 //	filter button event handlers
 $(".filter-btn").on("click", function (e) {
-  console.log(e)
   var id = $(this).attr("value");
   console.log(id)
   if (typeFilterList.includes(id)) {
@@ -35,25 +37,24 @@ $(".filter-btn").on("click", function (e) {
   typeFilterList.sort()
   filter()
 });
-async function getData(){
+async function getData() {
   let cache = JSON.parse(sessionStorage.getItem('initial-data'))
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
     voteData = cache.data
     filter()
-  }
-  else {
+  } else {
     axios({
-      method: 'get',
-      url: 'http://api.yup.io/votes?start=0&limit=1000',
-    })
+        method: 'get',
+        url: 'http://api.yup.io/votes?start=0&limit=1000',
+      })
       .then(function (response) {
         console.log(response)
         var data = []
         response.data.forEach(element => {
-          if(element.postData.caption){
+          if (element.postData.caption) {
             data.push({
               caption: element.postData.caption,
-              voter:element.voter,
+              voter: element.voter,
               timestamp: element.timestamp,
               postId: element.postid
             })
@@ -65,31 +66,30 @@ async function getData(){
           data: data
         })
         console.log(data)
-        sessionStorage.setItem('initial-data',cacheData)
+        sessionStorage.setItem('initial-data', cacheData)
         filter()
       });
   }
 }
 
-async function getUserData(user){
-  let cache = JSON.parse(sessionStorage.getItem(user+'-pre'))
+async function getUserData(user) {
+  let cache = JSON.parse(sessionStorage.getItem(user + '-pre'))
   console.log(cache)
-  if (cache && Date.now() - cache.timestamp < cacheDuration) {    
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
     return cache.data
-  }
-  else {
+  } else {
     return axios({
-      method: 'get',
-      url: `http://api.yup.io/votes/voter/${user}?start=0&limit=1000`,
-    })
+        method: 'get',
+        url: `http://api.yup.io/votes/voter/${user}?start=0&limit=1000`,
+      })
       .then(function (response) {
         console.log(response)
         var data = []
         response.data.forEach(element => {
-          if(element.postData?.caption){
+          if (element.postData?.caption) {
             data.push({
               caption: element.postData.caption,
-              voter:element.voter,
+              voter: element.voter,
               timestamp: element.timestamp,
               postId: element.postid
             })
@@ -99,74 +99,119 @@ async function getUserData(user){
           timestamp: Date.now(),
           data: data
         })
-        
+
         console.log(data)
-        sessionStorage.setItem(user+'-pre',cacheData)
-       return data
+        sessionStorage.setItem(user + '-pre', cacheData)
+        return data
       });
   }
 }
 
-async function getPostData(id, caption){
-  let cache = JSON.parse(sessionStorage.getItem(id+'-pre'))
-  if (cache && Date.now() - cache.timestamp < cacheDuration) {    
+async function getPostData(id, caption) {
+  let cache = JSON.parse(sessionStorage.getItem(id + '-pre'))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
     return cache.data
-  }
-  else { 
+  } else {
     let getCaption;
-    if(!caption){
-      getCaption = (await axios({
-      method: 'get',
-      url: `https://api.yup.io/posts/post/${id}`,
-    }))?.data.caption
+    if (!caption) {
+      getCaption = await axios({
+        method: 'get',
+        url: `https://api.yup.io/posts/post/${id}`,
+      }).then(function (response) {
+        return response.data.caption
+      })
     }
     return axios({
-      method: 'get',
-      url: `http://api.yup.io/votes/post/${id}?start=0&limit=1000`,
-    })
+        method: 'get',
+        url: `http://api.yup.io/votes/post/${id}?start=0&limit=1000`,
+      })
       .then(function (response) {
         console.log(response)
         var data = []
         response.data.forEach(element => {
-            data.push({
-              caption: caption? caption:getCaption,
-              voter:element.voter,
-              timestamp: element.timestamp,
-              postId: id
-            })
+          data.push({
+            caption: caption ? caption : getCaption,
+            voter: element.voter,
+            timestamp: element.timestamp,
+            postId: id
+          })
         })
         let cacheData = JSON.stringify({
           timestamp: Date.now(),
           data: data
         })
-        
+
         console.log(data)
-        sessionStorage.setItem(id+'-pre',cacheData)
-       return data
-      });
+        sessionStorage.setItem(id + '-pre', cacheData)
+        return data
+      })
   }
 }
+async function getPostDataURL(url) {
+  let cache = JSON.parse(sessionStorage.getItem(url + '-pre'))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
+    return cache.data
+  } else {
+    let id = await axios.post(
+        `https://api.yup.io/posts/post/caption`, {
+          caption: url
+        })
+      .then(function (response) {
+        return response.data[0]._id.postid
+      })
+    return axios({
+        method: 'get',
+        url: `http://api.yup.io/votes/post/${id}?start=0&limit=1000`,
+      })
+      .then(function (response) {
+        console.log(response)
+        var data = []
+        response.data.forEach(element => {
+          data.push({
+            caption: url,
+            voter: element.voter,
+            timestamp: element.timestamp,
+            postId: id
+          })
+        })
+        let cacheData = JSON.stringify({
+          timestamp: Date.now(),
+          data: data
+        })
+
+        console.log(data)
+        sessionStorage.setItem(id + '-pre', cacheData)
+        return data
+      })
+
+  }
+}
+
 function search() {
   let userLabel = document.getElementById('user-show-label')
   let input = document.getElementById('search-input').value
-  if (input?.length==12) {
-    postFilter=''
-    userFilter=input
+
+  if (input?.length == 12) {
+    postFilter = ''
+    userFilter = input
     userLabel.innerText = input
     userLabel.hidden = false
     document.getElementById('user').checked = true
     document.getElementById('user').value = input
-  }
-  else if(input?.length==5 || input?.length==19){
-    userFilter=''
+  } else {
+    userFilter = ''
     console.log("postFilter")
-    postFilter=input
+    postFilter = input
     userLabel.innerText = input
     userLabel.hidden = false
     document.getElementById('user').checked = true
     document.getElementById('user').value = input
   }
   filter()
+}
+
+function searchError() {
+  document.getElementById('error').hidden = false
 }
 
 function savedUser() {
@@ -176,17 +221,21 @@ function savedUser() {
 
 function allUsers() {
   userFilter = ''
+  postFilter = ''
   document.getElementById('user').checked = false
   filter()
 }
-function changeTimeframe(value){
-timeFrameFilter=value
-filter()
+
+function changeTimeframe(value) {
+  timeFrameFilter = value
+  filter()
 }
-function change3D(){
-threeDimensional=!threeDimensional
-filter()
+
+function change3D() {
+  threeDimensional = !threeDimensional
+  filter()
 }
+
 function updateDetailsTab() {
   console.log(currentData)
   $("#node-name").text(currentData.id)
@@ -321,11 +370,10 @@ function clickHandler(d) {
 }
 
 async function filter() {
-  document.getElementById('spinner').hidden=false
-  document.getElementById('container').hidden=true
-  document.getElementById('3d-graph').hidden=true
+  document.getElementById('spinner').hidden = false
+  document.getElementById('container').hidden = true
+  document.getElementById('3d-graph').hidden = true
   let cacheName = typeFilterList?.toString() + userFilter + timeFrameFilter + postFilter
-  console.log(postFilter)
   let cache = JSON.parse(sessionStorage.getItem(cacheName))
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
     console.log("Was cached")
@@ -333,49 +381,61 @@ async function filter() {
       id: typeFilterList?.length ? typeFilterList : "All Recent",
       nodes: cache.data.nodes,
       links: cache.data.links
-    }    
-  document.getElementById('spinner').hidden=true
-    if(threeDimensional){
-      document.getElementById('container').hidden=true
-      document.getElementById('3d-graph').hidden=false
-      draw3D(cache.data)
     }
-    else {
-      document.getElementById('3d-graph').hidden=true
-      document.getElementById('container').hidden=false
+    document.getElementById('spinner').hidden = true
+    if (threeDimensional) {
+      document.getElementById('container').hidden = true
+      document.getElementById('3d-graph').hidden = false
+      draw3D(cache.data)
+    } else {
+      document.getElementById('3d-graph').hidden = true
+      document.getElementById('container').hidden = false
       draw(cache.data)
     }
   } else {
-    console.log("Need to cache") 
+    console.log("Need to cache")
     let filteredData
-    if(userFilter){
+    if (userFilter) {
       let data = await getUserData(userFilter)
       filteredData = generateData(data)
-    }
-    else if(postFilter){
-      let data = await getPostData(postFilter)
+    } else if (postFilter) {
+      let url, data;
+      try {
+        url = new URL(postFilter) ? true : false;
+      } catch (e) {}
+      try {
+        if (url) {
+          data = await getPostDataURL(postFilter)
+        } else {
+          data = await getPostData(postFilter)
+        }
+      } catch (e) {
+        searchError()
+        document.getElementById('spinner').hidden = true
+        document.getElementById('user-show-label').hidden = true
+        return
+      }
       filteredData = generateData(data)
-    }
-    else {
+    } else {
       filteredData = generateData(voteData)
     }
+    console.log(filteredData)
     let data = JSON.stringify({
       timestamp: Date.now(),
       data: filteredData
     })
     console.log(cacheName)
-    sessionStorage.setItem(cacheName, data)    
-     document.getElementById('spinner').hidden=true
-    if(threeDimensional){
-      document.getElementById('container').hidden=true
-      document.getElementById('3d-graph').hidden=false
+    sessionStorage.setItem(cacheName, data)
+    if (threeDimensional) {
+      document.getElementById('container').hidden = true
+      document.getElementById('3d-graph').hidden = false
       draw3D(filteredData)
-    }
-    else {
-      document.getElementById('3d-graph').hidden=true
-      document.getElementById('container').hidden=false
+    } else {
+      document.getElementById('3d-graph').hidden = true
+      document.getElementById('container').hidden = false
       draw(filteredData)
     }
+
   }
   updateDetailsTab()
 }
@@ -383,60 +443,63 @@ async function filter() {
 function generateData(data) {
   let nodes = [];
   let links = [];
-  data.forEach(element => {
-    if(nodes.length<=2000){
-    if(!timeFrameFilter || dateFns.differenceInDays( new Date(),new Date(parseInt(element.timestamp))) <=timeFrameFilter){
-    let url;
-    try {
-      url = new URL(element.caption);
-    } catch (e) {
-      // console.log(e)
-    }
+  data?.forEach(element => {
+    if (nodes.length <= 2000) {
+      if (!timeFrameFilter || dateFns.differenceInDays(new Date(), new Date(parseInt(element.timestamp))) <= timeFrameFilter) {
+        let url;
+        try {
+          url = new URL(element.caption);
+        } catch (e) {
+          // console.log(e)
+        }
 
-    url = url ? filterHostname(url.hostname) : {group:'general',color:"#3a3a3a"}
-    if (typeFilterList && typeFilterList.includes("user")) {
-      if (!typeFilterList.includes(url.group)) {
-        nodes.push({
-          id: element.caption,
-          group: url.group,
-          color: url.color,
-          postId: element.postId
-        })
-      }
-    } else {
-      if (!typeFilterList?.includes(url.group)) {
-        if (!userFilter || userFilter == element.voter) {
-          if(element.caption){
+        url = url ? filterHostname(url.hostname) : {
+          group: 'general',
+          color: "#3a3a3a"
+        }
+        if (typeFilterList && typeFilterList.includes("user")) {
+          if (!typeFilterList.includes(url.group)) {
             nodes.push({
               id: element.caption,
               group: url.group,
               color: url.color,
               postId: element.postId
             })
-            nodes.push({
-              id: element.voter,
-              group: "user",
-              color: "#dadada"
-            })
-            links.push({
-              source: element.voter,
-              target: element.caption,
-            })
+          }
+        } else {
+          if (!typeFilterList?.includes(url.group)) {
+            if (!userFilter || userFilter == element.voter) {
+              if (element.caption) {
+                nodes.push({
+                  id: element.caption,
+                  group: url.group,
+                  color: url.color,
+                  postId: element.postId
+                })
+                nodes.push({
+                  id: element.voter,
+                  group: "user",
+                  color: "#dadada"
+                })
+                links.push({
+                  source: element.voter,
+                  target: element.caption,
+                })
+
+              }
+            }
 
           }
         }
-
       }
     }
-  }
-}
   })
   console.log(nodes)
   nodes = [...new Map(nodes.map(item => [item["id"], item])).values()]
   currentData = {
     id: typeFilterList?.length ? typeFilterList : "All Recent",
-    nodes:nodes,
-    links:links
+    nodes: nodes,
+    links: links
   }
   return {
     nodes,
@@ -446,35 +509,46 @@ function generateData(data) {
 
 function filterHostname(hostname) {
   if (hostname.includes("youtube")) {
-      return {group:'youtube',color:"#c4302b"}
+    return {
+      group: 'youtube',
+      color: "#c4302b"
+    }
   } else if (hostname.includes("twitter")) {
-      return {group:'twitter',color:"#1da1f2"}
+    return {
+      group: 'twitter',
+      color: "#1da1f2"
+    }
   } else if (hostname.includes("reddit")) {
-      return {group:'reddit',color:"orangered"}
+    return {
+      group: 'reddit',
+      color: "orangered"
+    }
   } else {
-      return {group:'general',color:"#3a3a3a"}
+    return {
+      group: 'general',
+      color: "#3a3a3a"
+    }
   }
 
 }
 
 async function getCorrespondingNodes(node) {
-  document.getElementById('container').hidden=true
-  document.getElementById('3d-graph').hidden=true
-  document.getElementById('spinner').hidden=false
+  document.getElementById('container').hidden = true
+  document.getElementById('3d-graph').hidden = true
+  document.getElementById('spinner').hidden = false
   console.log(node)
   if (node.group != "user") {
     let data = await getPostData(node.postId, node.id)
     let votes = getPostVotes(data, node)
-    document.getElementById('spinner').hidden=true
-    if(threeDimensional){
-      document.getElementById('3d-graph').hidden=false
+    document.getElementById('spinner').hidden = true
+    if (threeDimensional) {
+      document.getElementById('3d-graph').hidden = false
       draw3D(votes)
-    }
-    else {
-      document.getElementById('container').hidden=false
+    } else {
+      document.getElementById('container').hidden = false
       draw(votes)
     }
-  } else {    
+  } else {
 
     let userLabel = document.getElementById('user-show-label')
     userFilter = node.id
@@ -483,16 +557,15 @@ async function getCorrespondingNodes(node) {
     userLabel.hidden = false
     document.getElementById('user').checked = true
     document.getElementById('user').value = userFilter
-    let data = await getUserData(userFilter)   
-    console.log(data)   
+    let data = await getUserData(userFilter)
+    console.log(data)
     let votes = getUserVotes(data, node)
-    document.getElementById('spinner').hidden=true
-    if(threeDimensional){
-      document.getElementById('3d-graph').hidden=false
+    document.getElementById('spinner').hidden = true
+    if (threeDimensional) {
+      document.getElementById('3d-graph').hidden = false
       draw3D(votes)
-    }
-    else {
-      document.getElementById('container').hidden=false
+    } else {
+      document.getElementById('container').hidden = false
       draw(votes)
     }
   }
@@ -520,8 +593,8 @@ function getPostVotes(data, node) {
 
   currentData = {
     id: node.id,
-    nodes:nodes,
-    links:links
+    nodes: nodes,
+    links: links
   }
   return {
     nodes,
@@ -541,7 +614,10 @@ function getUserVotes(data, node) {
       } catch (e) {
         // console.log(e)
       }
-      url = url ? filterHostname(url.hostname) : {group:'general',color:"#3a3a3a"}
+      url = url ? filterHostname(url.hostname) : {
+        group: 'general',
+        color: "#3a3a3a"
+      }
       nodes.push({
         id: element.caption,
         group: url.group,
@@ -558,8 +634,8 @@ function getUserVotes(data, node) {
 
   currentData = {
     id: node.id,
-    nodes:nodes,
-    links:links
+    nodes: nodes,
+    links: links
   }
   return {
     nodes,

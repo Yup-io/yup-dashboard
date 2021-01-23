@@ -19,7 +19,10 @@
       <form  class="m-0" onsubmit="search()" action="javascript:void(0);">
       <label for="user" class="sr-only">Search User or Postid</label>
       <input  class="form-control mr-2" id="search-input" placeholder="Search User">
-      <input type="submit" hidden />
+      <input type="submit" hidden onclick="event.stopPropagation()"/>
+      <div class="alert  mt-2 alert-danger" role="alert" id="error" hidden>
+        Not found
+      </div>
     </form>
     <input type="radio" name="buttonGroup2"  id="user" ><label for="user" id="user-show-label" class="btn btn-light mx-2" hidden onclick="savedUser()"></label>
     <input type="radio" checked="true" name="buttonGroup2"  id="allUsers" ><label for="allUsers" class="btn btn-light mx-2" onclick="allUsers()">All users</label>
