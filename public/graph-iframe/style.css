@@ -129,6 +129,7 @@ a{
 .rectangle {
   width:15px;
   height:15px;
+  border-radius: 20px;
 }
 .twitter-color{
   background-color: #63A1FF;

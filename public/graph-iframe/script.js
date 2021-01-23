@@ -43,7 +43,7 @@ async function getData(){
   else {
     axios({
       method: 'get',
-      url: 'http://api.yup.io/votes?start=328000&limit=1000',
+      url: 'http://api.yup.io/votes?start=0&limit=1000',
     })
       .then(function (response) {
         console.log(response)
