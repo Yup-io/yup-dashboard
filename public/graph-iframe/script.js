@@ -473,6 +473,7 @@ async function getCorrespondingNodes(node) {
       draw(votes)
     }
   }
+  updateDetailsTab()
 }
 
 function getDomainVotes(data, node) {
