@@ -3,7 +3,7 @@ html{
 }
  body {
   width: 100%;
-  padding: 20px 50px 0 50px;
+  padding: 20px 10px 0 10px;
   font-family: Poppins, sans-sans-serif;
   height: fit-content;
   overflow: hidden;
@@ -80,6 +80,12 @@ p {
   color: #c4302b;
   background-color: #c4302b;
 }
+
+.reddit {
+  color: orangered;
+  background-color: orangered;
+}
+
 .active {
   color: #0f0f0f !important;
 }
@@ -91,7 +97,7 @@ p {
 #nodeInfo {
   display: flex;
   justify-content: center;
-  align-items: center;  
+  align-items: center;
   flex-direction: column;
 }
 p{
@@ -99,6 +105,8 @@ p{
 }
 #node-name{
   margin: 0;
+  flex-wrap: wrap;
+  word-break: break-all;
 }
 a{
   cursor: pointer;
@@ -111,7 +119,7 @@ a{
    margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   text-align: center;
 }
@@ -123,7 +131,7 @@ a{
   height:15px;
 }
 .twitter-color{
-  background-color: #63A1FF; 
+  background-color: #63A1FF;
 }
 label {
   margin-bottom:0;
@@ -145,14 +153,15 @@ input[type='checkbox'][name='buttonGroup3']:checked + label { background-color:#
 * In flags.css (from the file you download) you can copy-paste the .flag.flag-ad section
 */
 
-.tooltip {
-  background: #dadada;
+.scene-tooltip {
   padding: 15px 20px;
-  font-family: Poppins, sans-serif;
-  color: #090909;
+  font-family: Poppins, sans-serif !important;
+  color: #090909 !important;
   border-radius: 10px;
   font-weight: 500;
+  max-width: 200px;
 }
+
 .content{
   height: calc(100vh - 104px);
   max-height: 900px;
@@ -160,6 +169,8 @@ input[type='checkbox'][name='buttonGroup3']:checked + label { background-color:#
 .left {
   display: flex;
   justify-content: space-between;
+  position: absolute;
+  z-index: 1000;
 }
 .line{
   width: 15px;
@@ -168,7 +179,7 @@ input[type='checkbox'][name='buttonGroup3']:checked + label { background-color:#
 }
 /*
  * Footer
- 
+
 a:link {
   color: orangered;
   text-decoration: none;
@@ -192,9 +203,9 @@ a:hover {
   * Spinner
   *
   */
-  
+
 .spinner-box {
-  width: 70%;
+  width: 100%;
   height: 80%;
   display: flex;
   justify-content: center;

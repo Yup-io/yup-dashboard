@@ -260,7 +260,7 @@ function generateData(data, filter) {
 
   })
   nodes = [...new Map(nodes.map(item => [item["name"], item])).values()]
-  currentData = {name:filter?.length?filter:"Yup Network", nodes, links}
+  currentData = {name:filter?.length?filter:"All Recent", nodes, links}
   return { nodes, links }
 }
 function filterHostname(hostname) {
