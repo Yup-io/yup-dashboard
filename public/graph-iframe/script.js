@@ -401,15 +401,18 @@ async function filter() {
     } else if (postFilter) {
       let url, data;
       try {
-        url = new URL(postFilter) ? true : false;
+        url = new URL(postFilter) ? new URL(postFilter) : false;
       } catch (e) {}
       try {
         if (url) {
-          data = await getPostDataURL(postFilter)
+          url = url.href.replace(/\/$/, "");
+          console.log(url)
+          data = await getPostDataURL(url)
         } else {
           data = await getPostData(postFilter)
         }
       } catch (e) {
+        console.log(e)
         searchError()
         document.getElementById('spinner').hidden = true
         document.getElementById('user-show-label').hidden = true
@@ -419,6 +422,7 @@ async function filter() {
     } else {
       filteredData = generateData(voteData)
     }
+    document.getElementById('spinner').hidden = true
     console.log(filteredData)
     let data = JSON.stringify({
       timestamp: Date.now(),
