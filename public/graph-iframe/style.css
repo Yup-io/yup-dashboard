@@ -206,8 +206,9 @@ a:hover {
   */
 
 .spinner-box {
-  width: 100%;
-  height: 80%;
+  position: absolute;
+  top: 45%;
+  z-index: 1001;
   display: flex;
   justify-content: center;
   align-items: center;
