@@ -296,6 +296,7 @@ function mouseMoving(d) {
 }
 
 function clickHandler(d) {
+  tooltip?.remove();
   console.log(d)
   getCorrespondingNodes(d)
 }
