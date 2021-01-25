@@ -45,7 +45,7 @@ async function getData() {
   } else {
     axios({
         method: 'get',
-        url: 'http://api.yup.io/votes?start=0&limit=1000',
+        url: 'https://api.yup.io/votes?start=0&limit=1000',
       })
       .then(function (response) {
         console.log(response)
@@ -72,39 +72,44 @@ async function getData() {
   }
 }
 
-async function getUserData(user) {
-  let cache = JSON.parse(sessionStorage.getItem(user + '-pre'))
-  console.log(cache)
-  if (cache && Date.now() - cache.timestamp < cacheDuration) {
-    return cache.data
-  } else {
-    return axios({
-        method: 'get',
-        url: `http://api.yup.io/votes/voter/${user}?start=0&limit=1000`,
-      })
-      .then(function (response) {
-        console.log(response)
-        var data = []
-        response.data.forEach(element => {
-          if (element.postData?.caption) {
-            data.push({
-              caption: element.postData.caption,
-              voter: element.voter,
-              timestamp: element.timestamp,
-              postId: element.postid
-            })
-          }
+async function getUserData(users) {
+  let fullData = []
+  await Promise.all(users.map(async (user) => {  
+    let cache = JSON.parse(sessionStorage.getItem(user + '-pre'))
+    if (cache && Date.now() - cache.timestamp < cacheDuration) {
+      
+      fullData =  [ ...fullData, ...cache.data ]
+    } else {
+      await axios({
+          method: 'get',
+          url: `https://api.yup.io/votes/voter/${user}?start=0&limit=1000`,
         })
-        let cacheData = JSON.stringify({
-          timestamp: Date.now(),
-          data: data
-        })
-
-        console.log(data)
-        sessionStorage.setItem(user + '-pre', cacheData)
-        return data
-      });
+        .then(function (response) {
+          console.log(response)
+          var data = []
+          response.data.forEach(element => {
+            if (element.postData?.caption) {
+              data.push({
+                caption: element.postData.caption,
+                voter: element.voter,
+                timestamp: element.timestamp,
+                postId: element.postid
+              })
+            }
+          })
+          let cacheData = JSON.stringify({
+            timestamp: Date.now(),
+            data: data
+          })
+  
+          console.log(data)
+          sessionStorage.setItem(user + '-pre', cacheData)
+          fullData =  [ ...fullData, ...data ]
+        });
   }
+}));    
+  console.log(fullData)
+  return fullData
 }
 
 async function getPostData(id, caption) {
@@ -123,7 +128,7 @@ async function getPostData(id, caption) {
     }
     return axios({
         method: 'get',
-        url: `http://api.yup.io/votes/post/${id}?start=0&limit=1000`,
+        url: `https://api.yup.io/votes/post/${id}?start=0&limit=1000`,
       })
       .then(function (response) {
         console.log(response)
@@ -161,7 +166,7 @@ async function getPostDataURL(url) {
       })
     return axios({
         method: 'get',
-        url: `http://api.yup.io/votes/post/${id}?start=0&limit=1000`,
+        url: `https://api.yup.io/votes/post/${id}?start=0&limit=1000`,
       })
       .then(function (response) {
         console.log(response)
@@ -190,10 +195,17 @@ async function getPostDataURL(url) {
 function search() {
   let userLabel = document.getElementById('user-show-label')
   let input = document.getElementById('search-input').value
-
-  if (input?.length == 12) {
+  let url;
+  try {
+    url = new URL(input);
+  } catch (e) {
+    // console.log(e)
+  }
+  if (input && !url) {
+    
     postFilter = ''
-    userFilter = input
+    userFilter = input.split(',')
+    console.log(userFilter)
     userLabel.innerText = input
     userLabel.hidden = false
     document.getElementById('user').checked = true
@@ -472,7 +484,7 @@ function generateData(data) {
           }
         } else {
           if (!typeFilterList?.includes(url.group)) {
-            if (!userFilter || userFilter == element.voter) {
+            if (!userFilter || userFilter.includes(element.voter)) {
               if (element.caption) {
                 nodes.push({
                   id: element.caption,
@@ -555,8 +567,7 @@ async function getCorrespondingNodes(node) {
   } else {
 
     let userLabel = document.getElementById('user-show-label')
-    userFilter = node.id
-    console.log(userFilter)
+    userFilter = [node.id]
     userLabel.innerText = userFilter
     userLabel.hidden = false
     document.getElementById('user').checked = true

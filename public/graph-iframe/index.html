@@ -17,8 +17,8 @@
     </div>
     <div class=" d-flex form-group d-flex  mx-sm-1 mx-md-2 mb-0">
       <form  class="m-0" onsubmit="search()" action="javascript:void(0);">
-      <label for="user" class="sr-only">Search User or Postid</label>
-      <input  class="form-control mr-2" id="search-input" placeholder="Search User">
+      <label for="user" class="sr-only"></label>
+      <input  class="form-control mr-2" id="search-input" placeholder="Search User or Post">
       <input type="submit" hidden onclick="event.stopPropagation()"/>
       <div class="alert  mt-2 alert-danger" role="alert" id="error" hidden>
         Not found
@@ -107,7 +107,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.9.0/date_fns.min.js"></script>
   <script src="https://unpkg.com/3d-force-graph"></script>
   <script src="https://unpkg.com/neo4j-driver"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
