@@ -1,6 +1,7 @@
-h3.category-emoji {
-  margin-bottom: 0px;
-  margin-right: 2px;
+body {
+  background-color: #fafafa;
+  padding: 50px;
+  font-family: Poppins, sans-sans-serif;
 }
 
 h1,
@@ -108,7 +109,7 @@ a{
    margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   text-align: center;
 }
@@ -130,4 +131,27 @@ a{
   color: #090909;
   border-radius: 10px;
   font-weight: 500;
+}
+
+/*
+ * Footer
+
+a:link {
+  color: orangered;
+  text-decoration: none;
+}
+a:visited {
+  color: orangered;
+  text-decoration: none;
+}
+a:hover {
+  color: red;
+  text-decoration: underline;
+}
+
+.tableFooter {
+  margin-top: 15px;
+}
+.footerSvg {
+  width: 32px;
 }

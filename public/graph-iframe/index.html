@@ -1,0 +1,122 @@
+<html>
+
+<head>
+  <title>Show National Contiguity with a Force Directed Graph - D3.js</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="header mb-3">
+    <div>
+      <h4 class="mb-0 mr-3">Graph <span style="font-weight: 200; opacity: 0.5;">beta</span></h4>
+    </div>
+    <div class=" d-flex form-group d-flex  mx-sm-1 mx-md-2 mb-0">
+      <form  class="m-0" onsubmit="search()" action="javascript:void(0);">
+      <label for="user" class="sr-only"></label>
+      <input  class="form-control mr-2" id="search-input" placeholder="Search User or Post">
+      <input type="submit" hidden onclick="event.stopPropagation()"/>
+      <div class="alert  mt-2 alert-danger" role="alert" id="error" hidden>
+        Not found
+      </div>
+    </form>
+    <input type="radio" name="buttonGroup2"  id="user" ><label for="user" id="user-show-label" class="btn btn-light mx-2" hidden onclick="savedUser()"></label>
+    <input type="radio" checked="true" name="buttonGroup2"  id="allUsers" ><label for="allUsers" class="btn btn-light mx-2" onclick="allUsers()">All users</label>
+    </div>
+    <div class="d-flex form-group  mb-0 ml-auto">
+      <input type="radio" name="buttonGroup" id="day" ><label for="day" class="btn btn-light mx-1" onclick="changeTimeframe('0')">Last 24h</label>
+      <input type="radio" name="buttonGroup"  id="week" ><label for="week" class="btn btn-light mx-1"onclick="changeTimeframe('6')">Last Week</label>
+      <input type="radio" name="buttonGroup" id="month" ><label for="month" class="btn btn-light mx-1"onclick="changeTimeframe('30')">Last Month</label>
+      <input type="radio" checked="true" name="buttonGroup" id="all" ><label for="all" class="btn btn-light mx-1"onclick="changeTimeframe('')">All</label>
+      <input type="checkbox" checked="false" name="buttonGroup3" id="3d" ><label for="3d" class="btn btn-light mx-1"onclick="change3D('')">3D</label>
+    </div>
+  </div>
+  <div class="content d-flex">
+    <div class="left d-flex flex-column w-25">
+      <div class="mt-5" id="nodeInfo" style="width: 18rem;">
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+          <p>Focus:</p> <h6 id="node-name"></h6>
+        </div>
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+          <p>URLs/Users: </p><a class="text-primary" onclick="showNodeList()" id="node-amount"></a>
+        </div>
+        <div class="row align-items-center text-center my-2 justify-content-between w-100">
+          <p>Ratings:</p> <span id="node-connections"></span>
+        </div>
+      </div>
+
+        <div class="card mb-5 bg-light px-2 py-0" id="legend" style="width: 18rem; border: none; box-shadow: 0px 0px 30px 0px rgb(255 255 255 / 10%);">
+          <div class="card-body py-2">
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle twitter"></div>
+              <h6 class="card-title my-0 mx-2">Twitter</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="twitter">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle youtube"></div>
+              <h6 class="card-title my-0 mx-2">Youtube</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="youtube">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle reddit"></div>
+              <h6 class="card-title my-0 mx-2">Reddit</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="reddit">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="rectangle user"></div>
+              <h6 class="card-title my-0 mx-2">User</h6>
+              <input class="ml-auto filter-btn" type="checkbox" checked="checked" name="radio" value="user">
+            </div>
+            <div class="row align-items-center text-center my-2">
+              <div class="line"></div>
+              <h6 class="card-title my-0 mx-2">Ratings</h6>
+            </div>
+            </div>
+          </div>
+        </div>
+    <div class="d-flex justify-content-center right w-100">
+
+<div class="spinner-box" id="spinner">
+  <div class="configure-border-1">
+    <div class="configure-core"></div>
+  </div>
+  <div class="configure-border-2">
+    <div class="configure-core"></div>
+  </div>
+</div>
+<div id="3d-graph"></div>
+      <!-- Force directed graph -->
+      <div id='container' hidden>
+        <div id='graph'>
+          <div id='nodes'></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div id="nodeList" class="card">
+    <div class="card-body table-responsive">
+      <table id="table" class="table">
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.9.0/date_fns.min.js"></script>
+  <script src="https://unpkg.com/3d-force-graph"></script>
+  <script src="https://unpkg.com/neo4j-driver"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src='https://d3js.org/d3.v5.min.js'></script>
+  <script src="data/votes12_28.js"></script>
+  <script src="data/raw-votes.js"></script>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<html>
+
+<head>
+  <title>Show National Contiguity with a Force Directed Graph - D3.js</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="header">
+    <div>
+      <h1>Graph</h1>
+    </div>
+    <div class="button-container">
+      <button type="button" class="filter-btn" id="twitter" value="twitter">Twitter</button>
+      <button type="button" class="filter-btn" id="user" value="user">User</button>
+      <button type="button" class="filter-btn" id="youtube" value="youtube">YouTube</button>
+      <button type="button" class="reset-btn" id="reset">Reset</button>
+    </div>
+
+    <div id="nodeInfo">
+      <h5 id="node-name"></h5>
+      <p>Nodes: <a class="text-primary" onclick="showNodeList()" id="node-amount"></a></p>
+      <p >Links: <span id="node-connections"></span></p>
+</div>
+  </div>
+
+
+
+  <!-- Force directed graph -->
+  <div id='container'>
+    <div id='graph'>
+      <div id='nodes'></div>
+    </div>
+  </div>
+
+    <div id="nodeList"class="card">
+      <div class="card-body table-responsive">
+        <table id="table" class="table">
+        </table>
+      </div>
+    </div>
+
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src='https://d3js.org/d3.v5.min.js'></script>
+  <script src="data/votes12_28.js"></script>
+  <script src="data/raw-votes.js"></script>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>

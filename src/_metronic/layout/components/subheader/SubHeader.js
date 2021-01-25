@@ -60,13 +60,14 @@ export function SubHeader() {
             )}
 
             <div className="d-flex align-items-center mr-5">
+              <a href="/" target="_self">
               <h3 className="text-dark font-weight-bold my-2 mr-5">
                 <>
                   {subheader.title}
                 </>
                 {/*<small></small>*/}
               </h3>
-
+              </a>
               <p className="text-dark-25 my-2 mr-5">
                 Yup Protocol Explorer
               </p>
@@ -76,6 +77,7 @@ export function SubHeader() {
           </div>
 
           <div className="d-flex align-items-center">
+            <Button className="mx-3" variant="primary" href="/graph" target="_self">Graph</Button>
             <Button variant="primary" href="https://app.uniswap.org/#/swap?inputCurrency=0x69bbc3f8787d573f1bbdd0a5f40c7ba0aee9bcc9&outputCurrency=ETH" target="_blank">Buy YUP</Button>
           </div>
 
