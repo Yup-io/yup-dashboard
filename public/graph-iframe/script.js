@@ -76,8 +76,7 @@ async function getUserData(users) {
   let fullData = []
   await Promise.all(users.map(async (user) => {  
     let cache = JSON.parse(sessionStorage.getItem(user + '-pre'))
-    if (cache && Date.now() - cache.timestamp < cacheDuration) {
-      
+    if (cache && Date.now() - cache.timestamp < cacheDuration) {      
       fullData =  [ ...fullData, ...cache.data ]
     } else {
       await axios({
@@ -101,8 +100,6 @@ async function getUserData(users) {
             timestamp: Date.now(),
             data: data
           })
-  
-          console.log(data)
           sessionStorage.setItem(user + '-pre', cacheData)
           fullData =  [ ...fullData, ...data ]
         });
@@ -220,10 +217,6 @@ function search() {
     document.getElementById('user').value = input
   }
   filter()
-}
-
-function searchError() {
-  document.getElementById('error').hidden = false
 }
 
 function savedUser() {
@@ -380,11 +373,31 @@ function clickHandler(d) {
   console.log(d)
   getCorrespondingNodes(d)
 }
-
-async function filter() {
+function setSpinner(type){
+if(type==='spinner'){
   document.getElementById('spinner').hidden = false
   document.getElementById('container').hidden = true
   document.getElementById('3d-graph').hidden = true
+}
+else if(type==='normal'){
+  document.getElementById('spinner').hidden = true
+  document.getElementById('3d-graph').hidden = true
+  document.getElementById('container').hidden = false
+
+}
+else if(type==='error'){
+  document.getElementById('spinner').hidden = true
+  document.getElementById('user-show-label').hidden = true
+  document.getElementById('error').hidden = false
+}
+else {
+  document.getElementById('spinner').hidden = true
+  document.getElementById('container').hidden = true
+  document.getElementById('3d-graph').hidden = false
+}
+}
+async function filter() {
+  setSpinner('spinner')
   let cacheName = typeFilterList?.toString() + userFilter + timeFrameFilter + postFilter
   let cache = JSON.parse(sessionStorage.getItem(cacheName))
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
@@ -394,14 +407,11 @@ async function filter() {
       nodes: cache.data.nodes,
       links: cache.data.links
     }
-    document.getElementById('spinner').hidden = true
     if (threeDimensional) {
-      document.getElementById('container').hidden = true
-      document.getElementById('3d-graph').hidden = false
+      setSpinner('3D')
       draw3D(cache.data)
     } else {
-      document.getElementById('3d-graph').hidden = true
-      document.getElementById('container').hidden = false
+      setSpinner('normal')
       draw(cache.data)
     }
   } else {
@@ -425,16 +435,13 @@ async function filter() {
         }
       } catch (e) {
         console.log(e)
-        searchError()
-        document.getElementById('spinner').hidden = true
-        document.getElementById('user-show-label').hidden = true
+        setSpinner('error')
         return
       }
       filteredData = generateData(data)
     } else {
       filteredData = generateData(voteData)
     }
-    document.getElementById('spinner').hidden = true
     console.log(filteredData)
     let data = JSON.stringify({
       timestamp: Date.now(),
@@ -443,12 +450,10 @@ async function filter() {
     console.log(cacheName)
     sessionStorage.setItem(cacheName, data)
     if (threeDimensional) {
-      document.getElementById('container').hidden = true
-      document.getElementById('3d-graph').hidden = false
+      setSpinner('3D')
       draw3D(filteredData)
     } else {
-      document.getElementById('3d-graph').hidden = true
-      document.getElementById('container').hidden = false
+      setSpinner('normal')
       draw(filteredData)
     }
 
@@ -549,19 +554,16 @@ function filterHostname(hostname) {
 }
 
 async function getCorrespondingNodes(node) {
-  document.getElementById('container').hidden = true
-  document.getElementById('3d-graph').hidden = true
-  document.getElementById('spinner').hidden = false
+  setSpinner('spinner')
   console.log(node)
   if (node.group != "user") {
     let data = await getPostData(node.postId, node.id)
     let votes = getPostVotes(data, node)
-    document.getElementById('spinner').hidden = true
     if (threeDimensional) {
-      document.getElementById('3d-graph').hidden = false
+      setSpinner('3D')
       draw3D(votes)
     } else {
-      document.getElementById('container').hidden = false
+      setSpinner('normal')
       draw(votes)
     }
   } else {
@@ -575,12 +577,11 @@ async function getCorrespondingNodes(node) {
     let data = await getUserData(userFilter)
     console.log(data)
     let votes = getUserVotes(data, node)
-    document.getElementById('spinner').hidden = true
     if (threeDimensional) {
-      document.getElementById('3d-graph').hidden = false
+      setSpinner('3D')
       draw3D(votes)
     } else {
-      document.getElementById('container').hidden = false
+      setSpinner('normal')
       draw(votes)
     }
   }
