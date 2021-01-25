@@ -23,7 +23,7 @@ const myForceGraph = ForceGraph3D()(document.getElementById('3d-graph'))
 
 
 $(document).on('click', function () {
-  document.getElementById('error').hidden=true;  
+  document.getElementById('error').hidden=true;
 });
 //	filter button event handlers
 $(".filter-btn").on("click", function (e) {
@@ -45,7 +45,7 @@ async function getData() {
   } else {
     axios({
         method: 'get',
-        url: 'https://api.yup.io/votes?start=0&limit=1000',
+        url: 'https://api.yup.io/votes?start=0&limit=700',
       })
       .then(function (response) {
         console.log(response)
@@ -74,9 +74,9 @@ async function getData() {
 
 async function getUserData(users) {
   let fullData = []
-  await Promise.all(users.map(async (user) => {  
+  await Promise.all(users.map(async (user) => {
     let cache = JSON.parse(sessionStorage.getItem(user + '-pre'))
-    if (cache && Date.now() - cache.timestamp < cacheDuration) {      
+    if (cache && Date.now() - cache.timestamp < cacheDuration) {
       fullData =  [ ...fullData, ...cache.data ]
     } else {
       await axios({
@@ -104,7 +104,7 @@ async function getUserData(users) {
           fullData =  [ ...fullData, ...data ]
         });
   }
-}));    
+}));
   console.log(fullData)
   return fullData
 }
@@ -199,7 +199,7 @@ function search() {
     // console.log(e)
   }
   if (input && !url) {
-    
+
     postFilter = ''
     userFilter = input.split(',')
     console.log(userFilter)
