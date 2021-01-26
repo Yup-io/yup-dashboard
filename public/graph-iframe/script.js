@@ -45,7 +45,7 @@ async function getData() {
   } else {
     axios({
         method: 'get',
-        url: 'https://api.yup.io/votes?start=0&limit=700',
+        url: 'https://api.yup.io/votes?start=0&limit=500',
       })
       .then(function (response) {
         console.log(response)
