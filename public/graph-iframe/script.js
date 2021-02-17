@@ -640,15 +640,10 @@ function draw3D(data) {
   updateDetailsTab()
   myForceGraph.graphData(data);
 }
-async function start(){
-  try {
-    voteData = await getData(0,50)
+async function start(start, step){
+    voteData = await getData(start,step)
     filter()
-  }
-  catch(e){
-    console.log(e)
-  }
-}
+} 
 function updateNodesLoadingText(text){
   document.getElementById('nodes-loading').innerText = text
 }
@@ -680,5 +675,5 @@ async function loadDataBackground(start, step, end){
    }
    loadDataBackground(start+step, step, end)
 }
-start()
+start(0, 50)
 loadDataBackground(0, 50, 500)
