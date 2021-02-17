@@ -29,7 +29,7 @@ class YupGraph extends Component {
 // the dimensions for this container.
   }
   componentDidMount() {
-    /*fetch("https://www.api.bloks.io/tokens?type=topHolders&chain=eos&contract=token.yup&symbol=YUP&limit=10")
+    fetch("https://www.api.bloks.io/tokens?type=topHolders&chain=eos&contract=token.yup&symbol=YUP&limit=10")
       .then(res => res.json())
       .then(
         (result) => {
@@ -47,7 +47,7 @@ class YupGraph extends Component {
             error
           });
         }
-      )*/
+      )
       
       this.draw(this.generateData(voteData, this.typeFilterList))
      console.log() 
@@ -58,8 +58,8 @@ class YupGraph extends Component {
     var margin = { top: 10, right: 5, bottom: 10, left: 100 }
     var width = document.body.clientWidth;
     var height = document.body.clientHeight ;      
-    //this.updateDetailsTab()
-    //this.createTable(data)
+    this.updateDetailsTab()
+    this.createTable(data)
     var svg = d3.select(this.containerRef.current).append("svg")
       .attr("width", width)
       .attr("height", height);
@@ -263,7 +263,7 @@ class YupGraph extends Component {
             url = new URL(element.Caption);
           }
           catch (e) {
-            // console.log(e)
+            console.log(e)
           }
           url = url ? this.filterHostname(url.hostname) : "general"
           nodes.push({

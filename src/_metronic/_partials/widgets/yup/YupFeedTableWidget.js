@@ -18,12 +18,16 @@ class YupFeedTableWidget extends Component {
       error: null,
       isLoaded: false,
       items: { 1:null,2:null,3:null,4:null,5:null},
-      page: 1
+      page: 1,
     };
+    this.paginatorPages = [
+      1, 2, 3, 4 ,5
+    ]
     this.updateData = this.updateData.bind(this);
     this.getCreateVoteV3 = this.getCreateVoteV3.bind(this);
     this.getPostVoteV2 = this.getPostVoteV2.bind(this);
   }
+  
 
   componentDidMount() {
     this.updateData(1, 50)
@@ -31,7 +35,6 @@ class YupFeedTableWidget extends Component {
 
   }
   async updateData(page, limit) {
-
     let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);
     let allVotes = createVoteV3.actions.concat(postVoteV2.actions)
     allVotes.sort(function(a, b){return new Date(b.timestamp) - new Date(a.timestamp)});
@@ -144,14 +147,17 @@ class YupFeedTableWidget extends Component {
 
   }
   nextPage(){
-    if(this.state.page<5){
       let page = this.state.page+1
       this.setState({
         isLoaded: false,
         page: page
       });
+      if (this.state.page % 5 === 0) {
+        this.getMorePages();
+      }
       this.updateData(page,50)
-    }
+      
+      
  }
  lastPage(){
   if(this.state.page>1){
@@ -160,9 +166,33 @@ class YupFeedTableWidget extends Component {
       isLoaded: false,
       page: page
     });
+    if (this.state.page % 5 === 1) {
+      this.getPrevPages();
+    }
     this.updateData(page,50)
   }
 }
+
+getMorePages() {
+  let tempPages = []
+  for (let i = 1 ; i < 6; i++) {
+    tempPages.push(
+      this.state.page + i
+    )
+  }
+  this.paginatorPages = tempPages;
+}
+
+getPrevPages() {
+  let tempPages = []
+  for (let i = 5; i > 0; i--) {
+    tempPages.push(
+      this.state.page - i
+    )
+  }
+  this.paginatorPages = tempPages;
+}
+
   createRating(n){
     let rating = n.rating
     let like = n.like
@@ -321,11 +351,11 @@ class YupFeedTableWidget extends Component {
           <div className="separator separator-dashed my-7"></div>
               <Pagination className="float-right" size="lg">
                 <Pagination.Prev onClick={() =>this.lastPage() } />
-                <Pagination.Item active={this.state.page==1}  onClick={() =>this.updateData(1,50)}>{1}</Pagination.Item>
-                <Pagination.Item active={this.state.page==2} onClick={() =>this.updateData(2,50)}>{2}</Pagination.Item>
-                <Pagination.Item active={this.state.page==3} onClick={() =>this.updateData(3,50)}>{3}</Pagination.Item>
-                <Pagination.Item active={this.state.page==4}  onClick={() =>this.updateData(4,50)}>{4}</Pagination.Item>
-                <Pagination.Item active={this.state.page==5}  onClick={() =>this.updateData(5,50)}>{5}</Pagination.Item>
+                  <Pagination.Item active={this.state.page==this.paginatorPages[0]}  onClick={() =>this.updateData(this.paginatorPages[0],50)}>{this.paginatorPages[0]}</Pagination.Item>
+                  <Pagination.Item active={this.state.page==this.paginatorPages[1]} onClick={() =>this.updateData(this.paginatorPages[1],50)}>{this.paginatorPages[1]}</Pagination.Item>
+                  <Pagination.Item active={this.state.page==this.paginatorPages[2]} onClick={() =>this.updateData(this.paginatorPages[2],50)}>{this.paginatorPages[2]}</Pagination.Item>
+                  <Pagination.Item active={this.state.page==this.paginatorPages[3]}  onClick={() =>this.updateData(this.paginatorPages[3],50)}>{this.paginatorPages[3]}</Pagination.Item>
+                  <Pagination.Item active={this.state.page==this.paginatorPages[4]}  onClick={() =>this.updateData(this.paginatorPages[4],50)}>{this.paginatorPages[4]}</Pagination.Item>
                 <Pagination.Next onClick={() => this.nextPage()}/>
               </Pagination>
           </div>

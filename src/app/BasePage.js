@@ -25,12 +25,12 @@ export default function BasePage() {
             <Switch>
                 <ContentRoute path="/graph" component={YupGraphPage}/> 
                 <Route path="/" component={YupPage}/>
-               {/* 
                
-                <Route path="/google-material" component={GoogleMaterialPage}/>
+               
+                {/* <Route path="/google-material" component={GoogleMaterialPage}/>
                 <Route path="/react-bootstrap" component={ReactBootstrapPage}/>
                 <Route path="/e-commerce" component={ECommercePage}/>
-                <Redirect to="error/error-v1"/>*/}
+                <Redirect to="error/error-v1"/> */}
             </Switch>
         </Suspense>
     );
