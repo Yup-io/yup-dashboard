@@ -642,7 +642,7 @@ function draw3D(data) {
 }
 async function start(){
   try {
-    voteData = await getData(0)
+    voteData = await getData(0,50)
     filter()
   }
   catch(e){
@@ -657,7 +657,14 @@ function loadNewNodes(){
   document.getElementById('nodes-loading-container-done').hidden=true
 }
 async function loadDataBackground(start, step, end){
-  updateNodesLoadingText(`Loaded: ${start} out of ${end}`)
+  let cache = JSON.parse(sessionStorage.getItem('initial-data'))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
+    if( cache.data.length>499){
+      document.getElementById('nodes-loading-container').hidden=true
+      return
+    }
+  }
+  updateNodesLoadingText(`Loading: ${start} out of ${end}`)
    let newData = await getData(start, step, true)
    backgroundData = [...backgroundData,...newData]
    if(start === end){
