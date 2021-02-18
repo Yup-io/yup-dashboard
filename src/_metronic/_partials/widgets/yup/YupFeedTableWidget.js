@@ -40,7 +40,8 @@ class YupFeedTableWidget extends Component {
       item.timestamp = this.convertUTCDateToLocalDate(new Date(item.timestamp))
     })
     if (this.state.radioValue == '2') {
-      allVotes = allVotes.filter(vote => vote.act.data.like == true)
+      let allLikes = allVotes.filter(vote => vote.act.data.like == true)
+      allLikes.length > 0 ? allVotes = allLikes : this.setRadioValue('1')
     }
     else if (this.state.radioValue == '3') {
       let allDislikes = allVotes.filter(vote => vote.act.data.like == false)
