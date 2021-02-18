@@ -18,11 +18,14 @@ class YupFeedTableWidget extends Component {
       error: null,
       isLoaded: false,
       items: { 1:null,2:null,3:null,4:null,5:null},
-      page: 1
+      page: 1,
+      //Adding sortOrder to change the order, true is descending and false is ascending
+      sortOrder: true,
     };
     this.updateData = this.updateData.bind(this);
     this.getCreateVoteV3 = this.getCreateVoteV3.bind(this);
     this.getPostVoteV2 = this.getPostVoteV2.bind(this);
+    this.changeOrder = this.changeOrder.bind(this);
   }
 
   componentDidMount() {
@@ -34,7 +37,16 @@ class YupFeedTableWidget extends Component {
 
     let [createVoteV3,postVoteV2]= await Promise.all([this.getCreateVoteV3(0,limit), this.getPostVoteV2(0,limit)]);
     let allVotes = createVoteV3.actions.concat(postVoteV2.actions)
-    allVotes.sort(function(a, b){return new Date(b.timestamp) - new Date(a.timestamp)});
+    //Checking to see the current desired sorting order
+    if (this.sortOrder) {
+      allVotes.sort(function(a, b) {
+        return new Date(b.timestamp) - new Date(a.timestamp);
+      });
+    } else {
+      allVotes.sort(function(a, b) {
+        return new Date(a.timestamp) - new Date(b.timestamp);
+      });
+    }
     allVotes.forEach(item => {
       item.timestamp = this.convertUTCDateToLocalDate(new Date(item.timestamp))
     })
@@ -122,7 +134,21 @@ class YupFeedTableWidget extends Component {
       }
       itemsProcessed++;
       if(itemsProcessed === items.length) {
-        fullData.sort(function(a, b){return new Date(b.vote.timestamp).getTime() - new Date(a.vote.timestamp).getTime()});
+        if (this.sortOrder) {
+          fullData.sort(function(a, b) {
+            return (
+              new Date(b.vote.timestamp).getTime() -
+              new Date(a.vote.timestamp).getTime()
+            );
+          });
+        } else {
+          fullData.sort(function(a, b) {
+            return (
+              new Date(a.vote.timestamp).getTime() -
+              new Date(b.vote.timestamp).getTime()
+            );
+          });
+        }
         let newItems = this.state.items
         newItems[page] = fullData
         this.setState({
@@ -199,6 +225,12 @@ class YupFeedTableWidget extends Component {
   createPagination(){
 
   }
+  //Method for updating the order
+  changeOrder() {
+    this.sortOrder = !this.sortOrder;
+    this.updateData(1, 50);
+  }
+
   render() {
     const { error, isLoaded, items } = this.state;
     if (error) {
@@ -221,7 +253,7 @@ class YupFeedTableWidget extends Component {
                 <table className="table table-head-custom  table-borderless table-vertical-center">
                   <thead>
                     <tr className="text-left">
-                      <th className="text-left">Time</th>
+                      <th className="text-left" id="time" onClick={() => this.changeOrder()}>Time</th>
                       <th className="text-left">User</th>
                       <th >Content</th>
                       <th className="text-left">Rating</th>

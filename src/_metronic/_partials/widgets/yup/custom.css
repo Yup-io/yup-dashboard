@@ -131,3 +131,8 @@ a{
   border-radius: 10px;
   font-weight: 500;
 }
+
+#time {
+  text-decoration: underline;
+  cursor: pointer;
+}
