@@ -132,12 +132,23 @@ a{
   font-weight: 500;
 }
 
-.bg-like {
-  border-bottom:1px solid black ;
-  background-color: rgba(0, 255, 0, 0.25);
+.table-spacing {
+  border-collapse: separate;
+  border-spacing:3px 5px;
 }
 
-.bg-dislike {
-  border-bottom:1px solid black ;
-  background-color: rgba(255, 0, 0, 0.25);
+.like td:first-child {
+  box-shadow: -5px 0 0 0 rgb(0, 255, 0);
+}
+
+.like td:last-child {
+  box-shadow: 5px 0 0 0 rgb(0, 255, 0);
+}
+
+.dislike td:first-child {
+  box-shadow: -5px 0 0 0 rgb(255, 0, 0);
+}
+
+.dislike td:last-child {
+  box-shadow: 5px 0 0 0 rgb(255, 0, 0);
 }
