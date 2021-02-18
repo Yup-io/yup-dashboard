@@ -196,6 +196,10 @@ class YupFeedTableWidget extends Component {
     }
     return elements;
 }
+  setRowColor(n) {
+    return n ? 'bg-like' : 'bg-dislike' 
+  }
+
   createPagination(){
 
   }
@@ -232,7 +236,7 @@ class YupFeedTableWidget extends Component {
                   <tbody>
 
                     {items[this.state.page].map(item => (
-                      <tr key={item.vote.global_sequence}>
+                      <tr key={item.vote.global_sequence} className={this.setRowColor(item.vote.act.data.like)}>
                         <td>
                           <span className="text-dark-75 d-block font-size-lg">
                            {new Date(item.vote.timestamp).toLocaleDateString()} {new Date(item.vote.timestamp).toLocaleTimeString()}
@@ -245,8 +249,8 @@ class YupFeedTableWidget extends Component {
                         </td>
                         <td>
                           <a href={item.post.caption} className="text-primary d-block font-size-lg">
-                           {item.post.caption.substring(0, 30)}
-                           {item.post.caption.length>29 && '...'}
+                            {item.post.caption.substring(0, 30)}
+                            {item.post.caption.length>29 && '...'}
                           </a>
                         </td>
                         <td>
