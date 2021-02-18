@@ -43,7 +43,8 @@ class YupFeedTableWidget extends Component {
       allVotes = allVotes.filter(vote => vote.act.data.like == true)
     }
     else if (this.state.radioValue == '3') {
-      allVotes = allVotes.filter(vote => vote.act.data.like == false)
+      let allDislikes = allVotes.filter(vote => vote.act.data.like == false)
+      allDislikes.length > 0 ? allVotes = allDislikes : this.setRadioValue('1')
     }
     this.setState({numOfVotes: allVotes.length})
     let items = allVotes.slice(10*(page-1),(10*page))
