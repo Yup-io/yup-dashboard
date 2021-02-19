@@ -25,6 +25,7 @@ export function Routes() {
         <Switch>
            
                 <Layout>
+
                     <BasePage/>
                 </Layout>
            

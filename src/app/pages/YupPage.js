@@ -18,14 +18,14 @@ suhbeader.setTitle("📊 Yup Live");
   </div>
   </div>
   <div className="row">
-  {/*<div className="col-lg-4 col-xxl-4">
+  <div className="col-lg-4 col-xxl-4">
   <YupToplist className="card-stretch gutter-b" />
-  </div>*/}
+  </div>
   <div className="col-lg-12 col-xxl-12">
   <YupFeedTableWidget className="card-stretch gutter-b" />
   </div>
   <div className="col-lg-12 col-xxl-12">
-  {/* action widget <YupActionsWidget className="card-stretch gutter-b" /> */}
+  <YupActionsWidget className="card-stretch gutter-b" />
   </div>  
   </div>
   
