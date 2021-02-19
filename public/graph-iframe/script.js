@@ -1,6 +1,9 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-undef */
 //let data = localData;
 let currentData;
 let voteData;
+let backgroundData = [];
 let userFilter = '';
 let postFilter = '';
 let typeFilterList = [];
@@ -10,6 +13,7 @@ let timeFrameFilter = '';
 var width, height, svg, tooltip, simulation, link, node;
 var cacheDuration = 1800000 // 1800000 = 30min cache
 var threeDimensional = true;
+// eslint-disable-next-line no-undef
 const myForceGraph = ForceGraph3D()(document.getElementById('3d-graph'))
   .backgroundColor('white')
   .linkColor(() => '#0f0f0f') //Not working?
@@ -37,15 +41,14 @@ $(".filter-btn").on("click", function (e) {
   typeFilterList.sort()
   filter()
 });
-async function getData() {
+async function getData(start , step, noCache) {
   let cache = JSON.parse(sessionStorage.getItem('initial-data'))
-  if (cache && Date.now() - cache.timestamp < cacheDuration) {
-    voteData = cache.data
-    filter()
+  if (!noCache && cache && Date.now() - cache.timestamp < cacheDuration) {
+   return cache.data
   } else {
-    axios({
+ return await  axios({
         method: 'get',
-        url: 'https://api.yup.io/votes?start=0&limit=500',
+        url: `https://api.yup.io/votes?start=${start}&limit=${step}`,
       })
       .then(function (response) {
         console.log(response)
@@ -60,14 +63,13 @@ async function getData() {
             })
           }
         })
-        voteData = data
         let cacheData = JSON.stringify({
           timestamp: Date.now(),
           data: data
         })
         console.log(data)
         sessionStorage.setItem('initial-data', cacheData)
-        filter()
+        return data
       });
   }
 }
@@ -398,23 +400,6 @@ else {
 }
 async function filter() {
   setSpinner('spinner')
-  let cacheName = typeFilterList?.toString() + userFilter + timeFrameFilter + postFilter
-  let cache = JSON.parse(sessionStorage.getItem(cacheName))
-  if (cache && Date.now() - cache.timestamp < cacheDuration) {
-    console.log("Was cached")
-    currentData = {
-      id: typeFilterList?.length ? typeFilterList : "All Recent",
-      nodes: cache.data.nodes,
-      links: cache.data.links
-    }
-    if (threeDimensional) {
-      setSpinner('3D')
-      draw3D(cache.data)
-    } else {
-      setSpinner('normal')
-      draw(cache.data)
-    }
-  } else {
     console.log("Need to cache")
     let filteredData
     if (userFilter) {
@@ -442,13 +427,6 @@ async function filter() {
     } else {
       filteredData = generateData(voteData)
     }
-    console.log(filteredData)
-    let data = JSON.stringify({
-      timestamp: Date.now(),
-      data: filteredData
-    })
-    console.log(cacheName)
-    sessionStorage.setItem(cacheName, data)
     if (threeDimensional) {
       setSpinner('3D')
       draw3D(filteredData)
@@ -457,10 +435,9 @@ async function filter() {
       draw(filteredData)
     }
 
-  }
+  
   updateDetailsTab()
 }
-
 function generateData(data) {
   let nodes = [];
   let links = [];
@@ -663,4 +640,40 @@ function draw3D(data) {
   updateDetailsTab()
   myForceGraph.graphData(data);
 }
-getData()
+async function start(start, step){
+    voteData = await getData(start,step)
+    filter()
+} 
+function updateNodesLoadingText(text){
+  document.getElementById('nodes-loading').innerText = text
+}
+function loadNewNodes(){
+  filter()
+  document.getElementById('nodes-loading-container-done').hidden=true
+}
+async function loadDataBackground(start, step, end){
+  let cache = JSON.parse(sessionStorage.getItem('initial-data'))
+  if (cache && Date.now() - cache.timestamp < cacheDuration) {
+    if( cache.data.length>499){
+      document.getElementById('nodes-loading-container').hidden=true
+      return
+    }
+  }
+  updateNodesLoadingText(`Loading: ${start} out of ${end}`)
+   let newData = await getData(start, step, true)
+   backgroundData = [...backgroundData,...newData]
+   if(start === end){
+     voteData=backgroundData;
+     let cacheData = JSON.stringify({
+      timestamp: Date.now(),
+      data: voteData
+    })
+    sessionStorage.setItem('initial-data', cacheData)
+    document.getElementById('nodes-loading-container').hidden=true
+    document.getElementById('nodes-loading-container-done').hidden=false
+     return
+   }
+   loadDataBackground(start+step, step, end)
+}
+start(0, 50)
+loadDataBackground(0, 50, 500)

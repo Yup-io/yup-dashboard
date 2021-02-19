@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
     rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -74,6 +76,13 @@
             <div class="row align-items-center text-center my-2">
               <div class="line"></div>
               <h6 class="card-title my-0 mx-2">Ratings</h6>
+            </div>
+            <div id="nodes-loading-container" class="row align-items-center text-center my-2">
+              <div><i class="fa fa-spinner fa-spin"></i></div>
+              <h6 id="nodes-loading"class="card-title my-0 mx-2"></h6> 
+            </div>
+            <div id="nodes-loading-container-done" class="row justify-content-center" style="color:#666666" hidden>
+              <a onclick='loadNewNodes()'>Load 500 additional nodes</a>
             </div>
             </div>
           </div>
