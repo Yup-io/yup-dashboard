@@ -131,3 +131,14 @@ a{
   border-radius: 10px;
   font-weight: 500;
 }
+
+
+/********************************************/
+.space-between{
+  display:flex;
+  justify-content: space-between;
+}
+
+.select-dropdown{
+  margin-right:0.25rem;
+}
