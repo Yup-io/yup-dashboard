@@ -54,9 +54,9 @@ async function getData(start , step, noCache) {
         console.log(response)
         var data = []
         response.data.forEach(element => {
-          if (element.postData.caption) {
+          if (element.post.caption) {
             data.push({
-              caption: element.postData.caption,
+              caption: element.post.caption,
               voter: element.voter,
               timestamp: element.timestamp,
               postId: element.postid
@@ -89,9 +89,9 @@ async function getUserData(users) {
           console.log(response)
           var data = []
           response.data.forEach(element => {
-            if (element.postData?.caption) {
+            if (element.post?.caption) {
               data.push({
-                caption: element.postData.caption,
+                caption: element.post.caption,
                 voter: element.voter,
                 timestamp: element.timestamp,
                 postId: element.postid
