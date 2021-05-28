@@ -131,3 +131,24 @@ a{
   border-radius: 10px;
   font-weight: 500;
 }
+
+.table-spacing {
+  border-collapse: separate;
+  border-spacing:3px 5px;
+}
+
+.like td:first-child {
+  box-shadow: -5px 0 0 0 rgb(0, 255, 0);
+}
+
+.like td:last-child {
+  box-shadow: 5px 0 0 0 rgb(0, 255, 0);
+}
+
+.dislike td:first-child {
+  box-shadow: -5px 0 0 0 rgb(255, 0, 0);
+}
+
+.dislike td:last-child {
+  box-shadow: 5px 0 0 0 rgb(255, 0, 0);
+}
