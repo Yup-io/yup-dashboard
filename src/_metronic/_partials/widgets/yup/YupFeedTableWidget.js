@@ -269,9 +269,9 @@ class YupFeedTableWidget extends Component {
                           </div>
                         </td>
                         <td>
-                          <span className="text-dark-75 text-left d-block font-size-lg">
-                          {item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1)}
-                          </span>
+                          <span className="text-dark-75 text-left d-block font-size-lg"> 
+                          {item.post.tag? item.post.tag.split('.')[0].charAt(0).toUpperCase()+ item.post.tag.split('.')[0].slice(1) : new URL(item.post.caption).host.split('.')[0].charAt(0).toUpperCase() + new URL(item.post.caption).host.split('.')[0].slice(1)}
+                        </span>
                         </td>
                       </tr>
                     ))}
