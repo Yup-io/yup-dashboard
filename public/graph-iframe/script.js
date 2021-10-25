@@ -63,7 +63,7 @@ function exportData(type = 'current') {
       Group: el.group,
       PostId: 'postId' in el ? el.postId : null,
     }));
-    exportFileName = 'current-nodes.cvs';
+    exportFileName = 'current-nodes.csv';
   };
 
   if (type === 'current') currentSelFn();
