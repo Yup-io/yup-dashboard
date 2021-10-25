@@ -151,7 +151,7 @@ class YupTokenmetrics extends Component {
         </div>
       );
     } else {
-      console.log(gecko, supply);
+      //console.log(gecko, supply);
       supply.YUP.supply = parseInt(supply.YUP.supply);
       supply.YUP.max_supply = parseInt(supply.YUP.max_supply);
       let priceChangeColor = 'success';
@@ -173,7 +173,7 @@ class YupTokenmetrics extends Component {
                           {' '}
                           ${gecko.market_data.current_price.usd?.toFixed(2)}{' '}
                           <sup className={'text-' + priceChangeColor + ' font-size-sm'}>
-                            {Math.abs(gecko.market_data.price_change_24h).toFixed(2)}%
+                            {Math.abs(gecko.market_data.price_change_24h * 100).toFixed(2)}%
                           </sup>{' '}
                         </h2>
                         <span className="text-dark-50 font-weight-bold">
