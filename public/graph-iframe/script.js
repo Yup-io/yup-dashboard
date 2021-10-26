@@ -73,7 +73,7 @@ function exportData(type = 'current') {
       Group: el.group,
       PostId: 'postId' in el ? el.postId : null,
     }));
-    exportFileName = 'selected-nodes.cvs';
+    exportFileName = 'selected-nodes.csv';
   } else currentSelFn();
 
   const csvFile = Papa.unparse(remIrelData, {
