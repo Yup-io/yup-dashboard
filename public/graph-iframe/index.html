@@ -86,6 +86,42 @@
             </div>
             </div>
           </div>
+
+          <div class="card mb-5 bg-light px-2 py-0" style="width: 18rem; border: none; box-shadow: 0px 0px 30px 0px rgb(255 255 255 / 10%);">
+            <div class="card-body py-2">
+              <button style="border: 1px solid rgb(68, 68, 68);" class="btn btn-light mx-auto" onclick="exportData()">Export Current Data</button>
+              </div>
+            </div>
+
+            <div class="card mb-5 bg-light px-2 py-0" style="width: 18rem; border: none; box-shadow: 0px 0px 30px 0px rgb(255 255 255 / 10%);">
+              <div class="card-body py-2">
+                <p>Nodes Selected: <b id="select-node-num">0</b></p>
+                </div>
+                <div class="card-body py-2">
+                  <button style="border: 1px solid rgb(68, 68, 68);" class="btn btn-light mx-auto my-2" onclick="clearSelectedNodes()">Clear Selected Nodes</button>
+                  <button style="border: 1px solid rgb(68, 68, 68);" class="btn btn-light mx-auto" onclick="exportData('selected')">Export Selected Data</button>
+                  </div>
+              </div>
+
+              <div id="user-deep-rel-block" class="card mb-5 bg-light px-2 py-0" style="width: 18rem; border: none; box-shadow: 0px 0px 30px 0px rgb(255 255 255 / 10%);" hidden>
+                <div class="card-body py-2">
+                  <label for="user" class="sr-only">Node Limit:</label>
+                  <input  class="form-control mr-2" value="0" id="limit-nodes" placeholder="0 is maximum">
+                  </div>
+                  <div class="card-body py-2">
+                    <label for="user" class="sr-only">Links Limit:</label>
+                    <input  class="form-control mr-2" value="0" id="limit-links" placeholder="0 is maximum">
+                    </div>
+                  <div class="card-body py-2">
+                    <div class="row align-items-center text-center my-2">
+                      <h6 class="card-title my-0 mx-2">Bypass Cache</h6>
+                      <input class="ml-auto filter-btn" type="checkbox" id="bypass-cache" />
+                    </div>
+                    <p style="font-size:0.7rem;">0 will get the maximum data: 10 to 40 second loading</p>
+                    <button class="btn btn-light mx-auto my-2" style="border: 1px solid rgb(68, 68, 68);font-size:0.7rem;" onclick="getUserDeepData()">Generate Deep User Relations</button>
+                    </div>
+                </div>
+ 
         </div>
     <div class="d-flex justify-content-center right w-100">
 
@@ -117,6 +153,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.9.0/date_fns.min.js"></script>
+  <script src="https://unpkg.com/papaparse@5.3.1/papaparse.min.js"></script>
   <script src="https://unpkg.com/3d-force-graph"></script>
   <script src="https://unpkg.com/neo4j-driver"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
