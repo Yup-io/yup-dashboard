@@ -1,5 +1,5 @@
 // src/App.js
-
+import moment from "moment";
 //import { NaturePeopleOutlined } from '@material-ui/icons';
 import React, { Component } from 'react';
 //import { actions } from '../../../../app/modules/Auth/_redux/authRedux';
@@ -21,6 +21,7 @@ class YupTokenmetrics extends Component {
       supply: null,
       gecko: null,
       yupActions: null,
+      currentDailyEmission: null
     };
 
     this.getAllData = this.getAllData.bind(this);
@@ -28,9 +29,36 @@ class YupTokenmetrics extends Component {
     this.getGeckoData = this.getGeckoData.bind(this);
     this.getActionsCount = this.getActionsCount.bind(this);
   }
+  //Needs to be stored, no need to recalc that every time
+  async currentDailyEmission(){       
+    const json = [];
+    let yupSuplyNow = 100000 ;
+    let dayEm;
+            
+    let startDate = moment(new Date('24-October-2020'));
+    for(let i =0; i<= 364; i++){
+      dayEm = Math.round((1.25*yupSuplyNow)/100);
+      yupSuplyNow += dayEm;
+      json.push({ date:startDate.local().format('YYYY-MM-DD'), value:dayEm });
+      startDate = startDate.add(1, 'd');
+    }
+    for(let i =0; i<= 1049; i++){
+      dayEm-=100;
+      json.push({ date:startDate.local().format('YYYY-MM-DD'), value:dayEm });
+      startDate = startDate.add(1, 'd');
+    }  
+      const today = moment(new Date())
+      const diff =today.diff( moment(new Date('24-October-2020')), 'days') 
+     if(diff<=json.length) {
+       this.setState({currentDailyEmission:json[diff].value})
+      } else {
+        this.setState({currentDailyEmission:10000})
+      }
+  }
 
   componentDidMount() {
     this.getAllData();
+    this.currentDailyEmission()
     setInterval(this.getAllData, 30000);
   }
   async getAllData() {
@@ -109,7 +137,7 @@ class YupTokenmetrics extends Component {
   }
 
   render() {
-    const { error, isLoaded, supply, gecko, yupActions } = this.state;
+    const { error, isLoaded, supply, gecko, yupActions, currentDailyEmission } = this.state;
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
@@ -198,10 +226,10 @@ class YupTokenmetrics extends Component {
                     <td>
                       <span className="text-dark-25 font-weight-bolder d-block font-size-lg">Daily distribution</span>
                       <h2 className="text-secondary d-block mb-0 pt-2 pb-2">
-                        {(supply.YUP.supply * 0.0125)?.toFixed(0).numeral()} YUP
+                        {currentDailyEmission?.toFixed(0).numeral()} YUP
                       </h2>
                       <span className="text-dark-50 font-weight-bold">
-                        ${(gecko.market_data.current_price.usd * supply.YUP.supply * 0.0125)?.toFixed(0).numeral()}
+                        ${(gecko.market_data.current_price.usd * currentDailyEmission)?.toFixed(0).numeral()}
                       </span>
                     </td>
                   </tr>
