@@ -53,6 +53,7 @@
     "d3": "^7.1.1",
     "date-fns": "2.8.1",
     "downshift": "3.4.2",
+    "eosjs-api": "^7.0.4",
     "fg-loadcss": "2.1.0",
     "formik": "2.1.4",
     "json2mq": "0.2.0",
