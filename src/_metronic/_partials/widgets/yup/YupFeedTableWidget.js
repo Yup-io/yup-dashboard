@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 // import { Loader } from './loader'
 import './custom.css';
 import Skeleton from '@material-ui/lab/Skeleton';
+import EosApi from 'eosjs-api';
 
 // const styles = theme => ({
 //   Category: {
@@ -33,6 +34,13 @@ class YupFeedTableWidget extends Component {
     this.updateData = this.updateData.bind(this);
     this.getCreateVoteV3 = this.getCreateVoteV3.bind(this);
     this.getPostVoteV2 = this.getPostVoteV2.bind(this);
+    const rcpOptions = {
+      httpEndpoint: 'https://eos.greymass.com:443', // default, null for cold-storage
+      verbose: false, // API logging
+      fetchConfiguration: {},
+    };
+    
+    this.eosApi = EosApi(rcpOptions);
   }
 
   componentDidMount() {
@@ -46,16 +54,31 @@ class YupFeedTableWidget extends Component {
     // setInterval(this.updateData.bind(null, 1, 50), 60000);
   }
   async updateData(page, limit) {
-    let [createVoteV3, postVoteV2] = await Promise.all([this.getCreateVoteV3(0, limit), this.getPostVoteV2(0, limit)]);
-    let allVotes = createVoteV3.actions.concat(postVoteV2.actions);
-    allVotes.sort(function(a, b) {
-      return new Date(b.timestamp) - new Date(a.timestamp);
-    });
-    allVotes.forEach(item => {
-      item.timestamp = this.convertUTCDateToLocalDate(new Date(item.timestamp));
-    });
-    let items = allVotes.slice(10 * (page - 1), 10 * page);
-    this.getPostData(page, items);
+    //let [createVoteV3, postVoteV2] = await Promise.all([this.getCreateVoteV3(0, limit), this.getPostVoteV2(0, limit)]);
+    const YUPEOSACCOUNT = 'yupyupyupyup';
+    const last_action = (await this.eosApi.getActions(YUPEOSACCOUNT, -1, -1)).actions[0].account_action_seq;
+    let actions = await this.eosApi.getActions(YUPEOSACCOUNT, last_action - limit*page, limit)
+    const filterFn = action => action.action_trace.act.name === 'createvotev3' || action.action_trace.act.name === 'postvotev2'
+    actions = actions.actions.filter(filterFn);
+    if(actions.length <= 4) 
+    actions.concat((await this.eosApi.getActions(YUPEOSACCOUNT, last_action - limit*page*2, limit)).actions.filter(filterFn).forEach(action => actions.push(action)));
+
+    //let allVotes = createVoteV3.actions.concat(postVoteV2.actions);
+    // allVotes.sort(function(a, b) {
+    //   return new Date(b.timestamp) - new Date(a.timestamp);
+    // });
+
+
+    // allVotes.forEach(item => {
+    //   item.timestamp = this.convertUTCDateToLocalDate(new Date(item.timestamp));
+    // });
+    // let items = allVotes.slice(10 * (page - 1), 10 * page);
+    actions = actions.map(action => { 
+      action.timestamp = this.convertUTCDateToLocalDate(new Date(action.block_time))
+      action['@timestamp'] = action.timestamp;
+      action.act = action.action_trace.act;
+      ; return action; });
+    this.getPostData(page, actions);
   }
 
   convertUTCDateToLocalDate(date) {
