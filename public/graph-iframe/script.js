@@ -31,11 +31,11 @@ const myForceGraph = ForceGraph3D()(document.getElementById('3d-graph'))
     addSelectNode(node);
   });
 
-$(document).on('click', function() {
+$(document).on('click', function () {
   document.getElementById('error').hidden = true;
 });
 //	filter button event handlers
-$('.filter-btn').on('click', function(e) {
+$('.filter-btn').on('click', function (e) {
   var id = $(this).attr('value');
   console.log(id);
   if (typeFilterList.includes(id)) {
@@ -47,7 +47,7 @@ $('.filter-btn').on('click', function(e) {
   filter();
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const sceneInfoMsg = document.querySelector('.scene-nav-info');
   sceneInfoMsg.innerHTML = `${sceneInfoMsg.innerHTML} Right Click Nodes to select.`;
 });
@@ -128,13 +128,13 @@ async function getData(start, step, noCache) {
     return await axios({
       method: 'get',
       url: `https://api.yup.io/votes?start=${start}&limit=${step}`,
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
       var data = [];
       response.data.forEach(element => {
-        if (element.post.caption) {
+        if (element.post.url) {
           data.push({
-            caption: element.post.caption,
+            url: element.post.url,
             voter: element.voter,
             timestamp: element.timestamp,
             postId: element.postid,
@@ -163,13 +163,13 @@ async function getUserData(users) {
         await axios({
           method: 'get',
           url: `https://api.yup.io/votes/voter/${user}?start=0&limit=1000`,
-        }).then(function(response) {
+        }).then(function (response) {
           console.log(response);
           var data = [];
           response.data.forEach(element => {
-            if (element.post?.caption) {
+            if (element.post?.url) {
               data.push({
-                caption: element.post.caption,
+                url: element.post.url,
                 voter: element.voter,
                 timestamp: element.timestamp,
                 postId: element.postid,
@@ -195,7 +195,7 @@ async function getUserData(users) {
   return fullData;
 }
 
-async function getPostData(id, caption, bypassCache = false) {
+async function getPostData(id, url, bypassCache = false) {
   let cache;
   if (!bypassCache) {
     cache = JSON.parse(sessionStorage.getItem(id + '-pre'));
@@ -203,24 +203,24 @@ async function getPostData(id, caption, bypassCache = false) {
   if (cache && Date.now() - cache.timestamp < cacheDuration) {
     return cache.data;
   } else {
-    let getCaption;
-    if (!caption) {
-      getCaption = await axios({
+    let getUrl;
+    if (!url) {
+      getUrl = await axios({
         method: 'get',
         url: `https://api.yup.io/posts/post/${id}`,
-      }).then(function(response) {
-        return response.data.caption;
+      }).then(function (response) {
+        return response.data.url;
       });
     }
     return axios({
       method: 'get',
       url: `https://api.yup.io/votes/post/${id}?start=0&limit=1000`,
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
       var data = [];
       response.data.forEach(element => {
         data.push({
-          caption: caption ? caption : getCaption,
+          url: url ? url : getUrl,
           voter: element.voter,
           timestamp: element.timestamp,
           postId: id,
@@ -246,18 +246,18 @@ async function getPostDataURL(url) {
       .post(`https://api.yup.io/posts/post/caption`, {
         caption: url,
       })
-      .then(function(response) {
+      .then(function (response) {
         return response.data[0]._id.postid;
       });
     return axios({
       method: 'get',
       url: `https://api.yup.io/votes/post/${id}?start=0&limit=1000`,
-    }).then(function(response) {
+    }).then(function (response) {
       console.log(response);
       var data = [];
       response.data.forEach(element => {
         data.push({
-          caption: url,
+          url: url,
           voter: element.voter,
           timestamp: element.timestamp,
           postId: id,
@@ -403,11 +403,11 @@ function draw(data) {
     .data(data.nodes)
     .enter()
     .append('div')
-    .style('fill', function(d) {
+    .style('fill', function (d) {
       return d.id;
     })
     //we return the exact flag of each node from the image
-    .attr('class', function(d) {
+    .attr('class', function (d) {
       return 'node node-' + d.group;
     })
     //we call some classes to handle the mouse
@@ -422,7 +422,7 @@ function draw(data) {
       'link',
       d3
         .forceLink()
-        .id(function(d) {
+        .id(function (d) {
           return d.id;
         })
         .distance(10),
@@ -441,10 +441,10 @@ function tick(e) {
   // To move the node, we set the appropriate SVG
   // attributes to their new values.
   node
-    .style('left', function(d) {
+    .style('left', function (d) {
       return d.x + 'px';
     })
-    .style('top', function(d) {
+    .style('top', function (d) {
       return d.y + 'px';
     });
 
@@ -453,16 +453,16 @@ function tick(e) {
   // `source` and `target` properties, specifying
   // `x` and `y` values in each case.
   link
-    .attr('x1', function(d) {
+    .attr('x1', function (d) {
       return d.source.x;
     })
-    .attr('y1', function(d) {
+    .attr('y1', function (d) {
       return d.source.y;
     })
-    .attr('x2', function(d) {
+    .attr('x2', function (d) {
       return d.target.x;
     })
-    .attr('y2', function(d) {
+    .attr('y2', function (d) {
       return d.target.y;
     });
 }
@@ -523,7 +523,7 @@ async function filter() {
     let url, data;
     try {
       url = new URL(postFilter) ? new URL(postFilter) : false;
-    } catch (e) {}
+    } catch (e) { }
     try {
       if (url) {
         url = url.href.replace(/\/$/, '');
@@ -562,7 +562,7 @@ function generateData(data) {
       ) {
         let url;
         try {
-          url = new URL(element.caption);
+          url = new URL(element.url);
         } catch (e) {
           // console.log(e)
         }
@@ -570,13 +570,13 @@ function generateData(data) {
         url = url
           ? filterHostname(url.hostname)
           : {
-              group: 'general',
-              color: '#3a3a3a',
-            };
+            group: 'general',
+            color: '#3a3a3a',
+          };
         if (typeFilterList && typeFilterList.includes('user')) {
           if (!typeFilterList.includes(url.group)) {
             nodes.push({
-              id: element.caption,
+              id: element.url,
               group: url.group,
               color: url.color,
               postId: element.postId,
@@ -585,9 +585,9 @@ function generateData(data) {
         } else {
           if (!typeFilterList?.includes(url.group)) {
             if (!userFilter || userFilter.includes(element.voter)) {
-              if (element.caption) {
+              if (element.url) {
                 nodes.push({
-                  id: element.caption,
+                  id: element.url,
                   group: url.group,
                   color: url.color,
                   postId: element.postId,
@@ -599,7 +599,7 @@ function generateData(data) {
                 });
                 links.push({
                   source: element.voter,
-                  target: element.caption,
+                  target: element.url,
                 });
               }
             }
@@ -733,7 +733,7 @@ function getPostVotes(data, node) {
   let links = [];
   nodes.push(node);
   data.forEach(element => {
-    if (element.caption === node.id) {
+    if (element.url === node.id) {
       nodes.push({
         id: element.voter,
         group: 'user',
@@ -741,7 +741,7 @@ function getPostVotes(data, node) {
       });
       links.push({
         source: element.voter,
-        target: element.caption,
+        target: element.url,
       });
     }
   });
@@ -766,24 +766,24 @@ function getUserVotes(data, node) {
     if (element.voter === node.id) {
       let url;
       try {
-        url = new URL(element.caption);
+        url = new URL(element.url);
       } catch (e) {
         // console.log(e)
       }
       url = url
         ? filterHostname(url.hostname)
         : {
-            group: 'general',
-            color: '#3a3a3a',
-          };
+          group: 'general',
+          color: '#3a3a3a',
+        };
       nodes.push({
-        id: element.caption,
+        id: element.url,
         group: url.group,
         color: url.color,
         postId: element.postId,
       });
       links.push({
-        source: element.caption,
+        source: element.url,
         target: element.voter,
       });
     }
